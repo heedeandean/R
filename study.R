@@ -1,3 +1,6 @@
+data = read.csv("data/성적.csv")
+options(encoding='utf-8')
+
 # 문제1. 1,2,3,4를 입력하면 해당 혈액형(A, B, O, AB)을 factor로 출력하는 함수를 작성하시오. 
 f1 = function(n=1) {
   f = factor(n, levels=1:4, labels=c('A', 'B', 'O', 'AB'))
@@ -27,4 +30,25 @@ colnames(m)[10] = c(paste(colnames(m)[10], 10, sep=""))
 colnames(m)[20] = c(paste(colnames(m)[20], 20, sep=""))
 
 colnames(m[, c(10, 20)])
+
+# --------------------------------------------------------------
+
+# 1) df2와 df3의 컬럼을 합치되(cbind), 아래와 같은 형태로 구성하시오.
+# 학번 반 성별 국어 영어 수학 과학 예체
+
+cb = cbind(df2, df3[, 4:5])
+cb
+
+# 2) 위 1번 문제에서 과목 출력 순서를 아래와 같이 변경하시오.
+# 학번 반 성별 국어 과학 수학 예체 영어
+
+# 1안.
+cb2 = cb[, c(1:4, 7, 6, 8, 5)]
+cb2
+
+# 2안.
+cn = colnames(cb)
+
+cb3 = cb[, c(cn[1:4], '과학', '수학', '예체', '영어')]
+cb3
 
