@@ -1,0 +1,10 @@
+id#name#tel#addr
+1#hong1#010-1234-1111#Korea1
+2#hong2#010-1234-2222#Korea2
+3#hong3#010-1234-3333#Korea3
+4#hong4#010-1234-4444#Korea4
+5#hong5#010-1234-5555#Korea5
+6#hong6#010-1234-6666#Korea6
+7#hong7#010-1234-7777#Korea7
+8#hong8#010-1234-8888#Korea8
+9#hong9#010-1234-9999#Korea9

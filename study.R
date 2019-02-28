@@ -2,6 +2,7 @@ data = read.csv("data/성적.csv")
 options(encoding='utf-8')
 
 # 문제1. 1,2,3,4를 입력하면 해당 혈액형(A, B, O, AB)을 factor로 출력하는 함수를 작성하시오. 
+
 f1 = function(n=1) {
   f = factor(n, levels=1:4, labels=c('A', 'B', 'O', 'AB'))
   as.vector(f)
@@ -9,6 +10,7 @@ f1 = function(n=1) {
 f1(4)
 
 # 문제2. 1차원 vector와 값을 입력받아 vector에 값을 추가하는 append 함수를 작성하시오.
+
 f2 = function(v, val) {
   v[length(v) + 1] = val
   v
@@ -22,6 +24,7 @@ v1
 # (단, 10번째, 20번째 컬럼명은 알파벳 뒤에 10, 20으로 하시오)
 # FYI: > paste('A', 10, sep='')
 #      > paste0('A', 10)
+
 m = matrix(1:200, ncol = 20, byrow = TRUE)
 colnames(m) = LETTERS[1:ncol(m)]
 rownames(m) = letters[1:nrow(m)]
@@ -43,10 +46,12 @@ cb
 # 학번 반 성별 국어 과학 수학 예체 영어
 
 # 1안.
+
 cb2 = cb[, c(1:4, 7, 6, 8, 5)]
 cb2
 
 # 2안.
+
 cn = colnames(cb)
 
 cb3 = cb[, c(cn[1:4], '과학', '수학', '예체', '영어')]
