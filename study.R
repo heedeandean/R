@@ -13,7 +13,7 @@ f1(4)
 
 f2 = function(v, val) {
   v[length(v) + 1] = val
-  v
+  print(v)
 }
 v1 = 1:3
 v1 = f2(v1, 9)
