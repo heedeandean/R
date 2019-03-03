@@ -56,13 +56,15 @@ midwest = rename(midwest, asian = popasian)
 colnames(midwest)
 
 # 5)
-# total, asian 변수를 이용해 `전체 인구 대비 아시아계 인구 백분율` 파생변수(asianpct)를 추가하고, 히스토그램을 그려, 도시들이 어떻게 분포하는지 설명하시오.
+# total, asian 변수를 이용해 `전체 인구 대비 아시아계 인구 백분율 파생변수(asianpct)를 추가하고, 
+# 히스토그램을 그려, 도시들이 어떻게 분포하는지 설명하시오.
 
 
 
 
 # 6)
-# 아시아계 인구 백분율(asianpct)의 전체 평균을 구하고, 평균을 초과하면 "lg", 그 외는 "sm"을 부여하는 파생변수(asianrate)를 추가하는 코드를 작성하시오.
+# 아시아계 인구 백분율(asianpct)의 전체 평균을 구하고, 
+# 평균을 초과하면 "lg", 그 외는 "sm"을 부여하는 파생변수(asianrate)를 추가하는 코드를 작성하시오.
 
 
 # 7)
