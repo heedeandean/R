@@ -47,6 +47,13 @@ class(midwest)
 # 4)
 # poptotal 변수(컬럼)를 total로, popasian 변수를 asian으로 변수명을 변경하는 코드를 작성하시오.
 
+install.packages('dplyr')
+library('dplyr')
+
+midwest = rename(midwest, total = poptotal)
+midwest = rename(midwest, asian = popasian)
+
+colnames(midwest)
 
 # 5)
 # total, asian 변수를 이용해 `전체 인구 대비 아시아계 인구 백분율` 파생변수(asianpct)를 추가하고, 히스토그램을 그려, 도시들이 어떻게 분포하는지 설명하시오.
