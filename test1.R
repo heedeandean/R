@@ -20,11 +20,19 @@ mpg[order(-mpg$cty, -mpg$hwy),]
 # 2)
 # mpg 데이터에서 생산연도별 연료 종류에 따른 통합연비를 연도순으로 출력하시오.
 
-aggregate(data=mpg, )
+table(mpg$year)
 
+year1 = mpg[mpg$year == 1999,]
+year2 = mpg[mpg$year == 2008,]
 
-ban_k = aggregate(data=k, cbind(국어, 평균)~반, mean)
+year1 = aggregate(data=year1, cbind(cty, hwy)~fl, mean)
+year1$year = 1999
 
+year2 = aggregate(data=year2, cbind(cty, hwy)~fl, mean)
+year2$year = 2008
+
+mpg_year_fl = rbind(year1, year2)
+mpg_year_fl[order(mpg_year_fl$year),]
 
 # 3)
 # midwest 데이터를 data.frame으로 불러온 후, 데이터의 특징을 설명하시오.
