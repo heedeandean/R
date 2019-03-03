@@ -29,8 +29,8 @@ m = matrix(1:200, ncol = 20, byrow = TRUE)
 colnames(m) = LETTERS[1:ncol(m)]
 rownames(m) = letters[1:nrow(m)]
 
-colnames(m)[10] = c(paste(colnames(m)[10], 10, sep=""))
-colnames(m)[20] = c(paste(colnames(m)[20], 20, sep=""))
+colnames(m)[10] = paste(colnames(m)[10], 10, sep="")
+colnames(m)[20] = paste(colnames(m)[20], 20, sep="")
 
 colnames(m[, c(10, 20)])
 
