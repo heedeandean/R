@@ -37,6 +37,12 @@ mpg_year_fl[order(mpg_year_fl$year),]
 # 3)
 # midwest 데이터를 data.frame으로 불러온 후, 데이터의 특징을 설명하시오.
 
+midwest = as.data.frame(ggplot2::midwest)
+class(midwest)
+
+# 데이터의 특징 : 각 지역에 사는 인구의 특징을 나타냈다.
+#                 (특히, 인종, 민족, 성인/어린이, 빈곤률 등 각 지역의 특징을 나타냈다.)
+
 
 # 4)
 # poptotal 변수(컬럼)를 total로, popasian 변수를 asian으로 변수명을 변경하는 코드를 작성하시오.
