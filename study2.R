@@ -15,7 +15,7 @@ View(mtx)
 # 엑셀파일(melontop100.xlsx)을 csv형태로 저장한 후 RStudio에서 read하시오. 
 # (read.table, read.csv모두 가능)
 
-options(encodig='UTF-8')
+options(encoding='UTF-8')
 mc = read.csv('data/mc.csv')
 mc
 
