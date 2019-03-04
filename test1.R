@@ -98,7 +98,7 @@ sum(sa$asianpct) # 데이터 검증
 # 설명.
 # state(IL, IN, MI, OH, WI)가 있고, 
 # 아시아계 인구 비율이 가장 높은 state는 IL으로 49.8%로 나타났다.
-#                      가장 적은 state는 IN으로 6.57%로 나타났다.
+#                    가장 적은 state는 IN으로 6.57%로 나타났다.
 
 # 5)
 # 아시아계 인구 백분율(asianpct)의 전체 평균을 구하고, 
