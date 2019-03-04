@@ -1,3 +1,4 @@
+# 문항 1.
 ```R
 library(ggplot2)
 mpg = as.data.frame(ggplot2::mpg)
@@ -34,9 +35,10 @@ year2$year = 2008
 
 mpg_year_fl = rbind(year1, year2)
 mpg_year_fl[order(mpg_year_fl$year),]
-
-
-# 3)
+```
+# 문항 2.
+```R
+# 1)
 # midwest 데이터를 data.frame으로 불러온 후, 
 # 전체인구와 아시아계인구의 데이터의 특징을 설명하시오.
 
@@ -54,7 +56,7 @@ colnames(midwest)
 # 즉, 각 PID의 인구 대비 아시아계 인구 비율을 알 수 있다.
 
 
-# 4)
+# 2)
 # poptotal 변수(컬럼)를 total로, popasian 변수를 asian으로 변수명을 변경하는 코드를 작성하시오.
 
 install.packages('dplyr')
@@ -66,7 +68,7 @@ midwest = rename(midwest, asian = popasian)
 colnames(midwest)
 
 
-# 5)
+# 3)
 # 전체 아시아계 인구수와, asian 변수를 이용해 '전체 아시아계 인구 대비 아시아계 인구 백분율' 
 # 파생변수(asianpct)를 추가하고, 히스토그램을 그리시오.
 
@@ -79,7 +81,7 @@ hist(midwest$asianpct)
 # 데이터 검증
 sum(midwest$asianpct)
 
-# 6)
+# 4)
 # 도시(state)기준으로 아시아계 인구가 어떻게 분포하는지 설명하시오.
 
 table(midwest$state)
@@ -92,7 +94,7 @@ hist(sa$asianpct)
 # state(IL, IN, MI, OH, WI)가 있고, 
 # 각 state의 아시아계 인구 비율은 약 1~2%로 나타 났다.
 
-# 7)
+# 5)
 # 아시아계 인구 백분율(asianpct)의 전체 평균을 구하고, 
 # 평균을 초과하면 "lg", 그 외는 "sm"을 부여하는 파생변수(asianrate)를 추가하는 코드를 작성하시오.
 
@@ -102,11 +104,10 @@ midwest$asianrate = ifelse(midwest$asianpct > am, 'lg', 'sm')
 head(midwest)
 
 
-# 8)
+# 6)
 # "lg"와 "sm"에 해당하는 지역이 얼마나 되는지 빈도 막대그래프(qplot)을 그려보시오.
 
 library(ggplot2)
 
 qplot(midwest$asianrate)
-
 ```
