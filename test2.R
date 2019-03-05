@@ -11,35 +11,73 @@ table(data$group) # 데이터 검증.
 # 2)
 # fibonacci.R 파일을 작성하고 console에서 실행하시오.
 
+#(shift + click)
+# https://github.com/heedeandean/R/blob/master/data/fibonacci.R
+
 source('data/fibonacci.R')
 
 
 # 3)
-# apply를 이용하여 smdt에 과목별 평균점수 행을 추가하고, 
-
-smdt = data.frame(stuno = 1:5, 
-                  Korean=sample(60:100, 5),
-                  English=sample((5:10) * 10, 5),
-                  Math=sample(50:100, 5))
-
-smdt_avg = apply(smdt[, 2:4], MARGIN = 2, FUN = mean)
-smdt_avg
-
-smdt
-rbind(smdt[, 2:4], smdt_avg)
-
-# 4)
+# apply를 이용하여 smdt에 과목별 (총)평균점수 행을 추가하고, 
 # 총점과 평균 변수(컬럼)을 추가하시오.
-# stuno Korean English Math total avg
+
+# > smdt
+#   stuno Korean English Math total avg
 # 1     1     81      70   71   222  74
 # 2     2     82      50   95   227  76
-# 3     3    100      60   76   236  79
-# 4     4     77     100   54   231  77
-# 5     5     78      80   86   244  81
+# ...
 # 6    계     84      72   76   232  77
 
+# 임의의 smdt 데이터 생성.
+
+smdt = data.frame(stuno = 1:5, 
+                  Korean = sample(60:100, 5),
+                  English = sample((5:10) * 10, 5),
+                  Math = sample(50:100, 5))
+
+# 과목별 (총)평균점수 행 추가.
+
+col_mean = round(apply(smdt, MARGIN = 2, FUN = mean))
+
+smdt = rbind(smdt, col_mean)
+smdt
+smdt[6, 1] = '계'
+
+smdt
+str(smdt)
+
+# total, avg 컬럼 추가.
+
 smdt$total = apply(smdt[, 2:4], MARGIN = 1, FUN = sum)
-smdt$avg = apply(smdt[, 2:4], MARGIN = 1, FUN = mean)
-smdt_t = apply(smdt[, 2:6], MARGIN = 2, FUN = mean)
-smdt_t
-rbind(smdt[, 2:6], smdt_t)
+smdt$avg = round(apply(smdt[, 2:4], MARGIN = 1, FUN = mean))
+smdt
+
+# 데이터 검증.
+
+smdt$Korean + smdt$English + smdt$Math
+smdt$total
+
+round(smdt$total / 3)
+smdt$avg
+
+
+# 4)
+# 2016~2019년 연도별 1월(Jan) ~ 12월(Dec) 매출액 데이터를
+# `no year Jan Feb … Dec` 형태로 만든 다음, 아래와 같이 출력하시오.
+
+#     year month saleamt
+# 1   2016   Jan   49900
+# 2   2017   Jan   48300
+# 3   2018   Jan   70200
+
+library('reshape2')
+
+df_year = cbind(data.frame(no=1:4, year=2016:2019),
+                  matrix(round(runif(16), 3) * 100000, ncol=12, dimnames = list(NULL, month.abb))) 
+df_year
+
+melt_year = melt(data=df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
+melt_year
+
+
+
