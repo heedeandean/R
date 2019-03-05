@@ -26,6 +26,7 @@ mpg$cthw = mpg$cty + mpg$hwy
 head(mpg)
 mpg[order(-mpg$cthw),]
 
+
 # 2)
 # mpg 데이터에서 생산연도별 연료 종류에 따른 통합연비를 연도순으로 출력하시오.
 
@@ -90,6 +91,7 @@ sum(midwest$asianpct) # 데이터 검증
 library(ggplot2)
 plot(midwest$asianpct)
 
+
 # 4)
 # 도시(state)기준으로 아시아계 인구가 어떻게 분포하는지 설명하시오.
 
@@ -106,6 +108,7 @@ sum(sa$asianpct) # 데이터 검증
 # state(IL, IN, MI, OH, WI)가 있고, 
 # 아시아계 인구 비율이 가장 높은 state는 IL으로 49.8%로 나타났다.
 #                    가장 적은 state는 IN으로 6.57%로 나타났다.
+
 
 # 5)
 # 아시아계 인구 백분율(asianpct)의 전체 평균을 구하고, 
