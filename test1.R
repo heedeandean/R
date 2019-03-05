@@ -16,25 +16,21 @@ mpg = as.data.frame(ggplot2::mpg)
 # 1)
 # mpg 데이터에서 통합 연비(도시와 고속도로)가 높은 순으로 출력하시오.
 
+# 1안.
+
 mpg[order(-mpg$cty, -mpg$hwy),]
 
+# 2안.
+
+mpg$cthw = mpg$cty + mpg$hwy
+head(mpg)
+mpg[order(-mpg$cthw),]
 
 # 2)
 # mpg 데이터에서 생산연도별 연료 종류에 따른 통합연비를 연도순으로 출력하시오.
 
-table(mpg$year)
-
-year1 = mpg[mpg$year == 1999,]
-year2 = mpg[mpg$year == 2008,]
-
-year1 = aggregate(data=year1, cbind(cty, hwy)~fl, mean)
-year1$year = 1999
-
-year2 = aggregate(data=year2, cbind(cty, hwy)~fl, mean)
-year2$year = 2008
-
-mpg_year_fl = rbind(year1, year2)
-mpg_year_fl[order(mpg_year_fl$year),]
+x = aggregate(data=mpg, cthw~(year+fl), mean)
+x[order(x$year),]
 
 
 # --------------------------------------------------------------
@@ -51,6 +47,7 @@ class(midwest)
 library('psych')
 describe(midwest)
 colnames(midwest)
+aggregate(data=midwest, cbind(poptotal, popdensity, popasian)~state, mean)
 
 # 데이터의 특징 : 각 지역에 사는 인구의 특징을 나타냈다.
 #                 (특히, 인종, 민족, 성인/어린이, 빈곤률 등 각 지역의 특징을 나타냈다.)
@@ -62,6 +59,8 @@ colnames(midwest)
 # 2)
 # poptotal 변수(컬럼)를 total로, popasian 변수를 asian으로 변수명을 변경하는 코드를 작성하시오.
 
+# 1안.
+
 install.packages('dplyr')
 library('dplyr')
 
@@ -69,6 +68,11 @@ midwest = rename(midwest, total = poptotal)
 midwest = rename(midwest, asian = popasian)
 
 colnames(midwest)
+
+# 2안.
+
+colnames(midwest)[5] = 'total'
+colnames(midwest)[10] = 'asian'
 
 
 # 3)
@@ -83,6 +87,8 @@ hist(midwest$asianpct)
 
 sum(midwest$asianpct) # 데이터 검증
 
+library(ggplot2)
+plot(midwest$asianpct)
 
 # 4)
 # 도시(state)기준으로 아시아계 인구가 어떻게 분포하는지 설명하시오.
@@ -90,6 +96,7 @@ sum(midwest$asianpct) # 데이터 검증
 table(midwest$state)
 
 sa = aggregate(data=midwest, asianpct~state, sum)
+sa
 
 sa[order(-sa$asianpct),] # 아시아계 인구비율로 내림차순.(state 기준) 
 
