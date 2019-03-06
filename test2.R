@@ -6,11 +6,11 @@ data = read.csv("data/성적.csv")
 
 # 1안.
 
-data$group = sample(rep(LETTERS[1:3], times=1, length.out=480), size = nrow(data), replace = F)
+data$group = sample(rep(LETTERS[1:3], times = 1, length.out = nrow(data)), size = nrow(data), replace = F)
 
 # 2안.
 
-data$group = sample(rep(LETTERS[1:3], times=160), size = nrow(data), replace = F)
+data$group = sample(rep(LETTERS[1:3], times = 160), size = nrow(data), replace = F)
 
 # 데이터 검증.
 
@@ -81,11 +81,11 @@ smdt$avg
 
 library('reshape2')
 
-df_year = cbind(data.frame(no=1:4, year=2016:2019),
-                  matrix(round(runif(16), 3) * 100000, ncol=12, dimnames = list(NULL, month.abb))) 
+df_year = cbind(data.frame(no = 1:4, year = 2016:2019),
+                  matrix(round(runif(16), 3) * 100000, ncol = 12, dimnames = list(NULL, month.abb))) 
 df_year
 
-melt_year = melt(data=df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
+melt_year = melt(data = df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
 melt_year
 
 
