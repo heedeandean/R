@@ -50,8 +50,8 @@ col_mean = round(apply(smdt, MARGIN = 2, FUN = mean))
 
 smdt = rbind(smdt, col_mean)
 smdt
-smdt[6, 1] = '계'
 
+smdt[6, 1] = '계'
 smdt
 str(smdt)
 
@@ -82,7 +82,7 @@ smdt$avg
 library('reshape2')
 
 df_year = cbind(data.frame(no = 1:4, year = 2016:2019),
-                  matrix(round(runif(16), 3) * 100000, ncol = 12, dimnames = list(NULL, month.abb))) 
+                  matrix(round(runif(48), 3) * 100000, ncol = 12, dimnames = list(NULL, month.abb))) 
 df_year
 
 melt_year = melt(data = df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
