@@ -4,7 +4,7 @@ data = read.csv("data/성적.csv")
 # 1)
 # data$group 컬럼에 A조~C조 랜덤으로 160명씩 고르게 분포시키시오.
 
-data$group = sample(c('A', 'B', 'C'), size = nrow(data), replace = T, prob = c(160, 160, 160))
+data$group = sample(rep(LETTERS[1:3], times=1, length.out=480), size = nrow(data), replace = F)
 table(data$group) # 데이터 검증.
 
 
