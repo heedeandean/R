@@ -5,13 +5,16 @@ data = read.csv("data/성적.csv")
 # data$group 컬럼에 A조~C조 랜덤으로 160명씩 고르게 분포시키시오.
 
 data$group = sample(rep(LETTERS[1:3], times=1, length.out=480), size = nrow(data), replace = F)
-table(data$group) # 데이터 검증.
 
+# 데이터 검증.
+
+table(data$group) 
+data$group
 
 # 2)
 # fibonacci.R 파일을 작성하고 console에서 실행하시오.
 
-#(shift + click)
+# (shift + click)
 # https://github.com/heedeandean/R/blob/master/data/fibonacci.R
 
 source('data/fibonacci.R')
