@@ -23,7 +23,7 @@ mc
 # 3)
 # 온도파일(temper.txt)을 읽어 연도, 기온, 구분자 컬럼만 남기시오.
 
-td <- read.fwf('data/temper.txt', header=F, width=c(15, 4, 68, 5, 1))
+td <- read.fwf('data/temper.txt', header = F, width = c(15, 4, 68, 5, 1))
 td$V1 <- NULL
 td$V3 <- NULL
 td
