@@ -1,16 +1,16 @@
-options(encoding='utf-8')
-data = read.csv("data/성적.csv")
+options(encoding = 'utf-8')
+data <- read.csv("data/성적.csv")
 
 # 1)
 # data$group 컬럼에 A조~C조 랜덤으로 160명씩 고르게 분포시키시오.
 
 # 1안.
 
-data$group = sample(rep(LETTERS[1:3], times = 1, length.out = nrow(data)), size = nrow(data), replace = F)
+data$group <- sample(rep(LETTERS[1:3], times = 1, length.out = nrow(data)), size = nrow(data), replace = F)
 
 # 2안.
 
-data$group = sample(rep(LETTERS[1:3], times = 160), size = nrow(data), replace = F)
+data$group <- sample(rep(LETTERS[1:3], times = 160), size = nrow(data), replace = F)
 
 # 데이터 검증.
 
@@ -39,26 +39,26 @@ source('data/fibonacci.R')
 
 # 임의의 smdt 데이터 생성.
 
-smdt = data.frame(stuno = 1:5, 
+smdt <- data.frame(stuno = 1:5, 
                   Korean = sample(60:100, 5),
                   English = sample((5:10) * 10, 5),
                   Math = sample(50:100, 5))
 
 # 과목별 (총)평균점수 행 추가.
 
-col_mean = round(apply(smdt, MARGIN = 2, FUN = mean))
+col_mean <- round(apply(smdt, MARGIN = 2, FUN = mean))
 
-smdt = rbind(smdt, col_mean)
+smdt <- rbind(smdt, col_mean)
 smdt
 
-smdt[6, 1] = '계'
+smdt[6, 1] <- '계'
 smdt
 str(smdt)
 
 # total, avg 컬럼 추가.
 
-smdt$total = apply(smdt[, 2:4], MARGIN = 1, FUN = sum)
-smdt$avg = round(apply(smdt[, 2:4], MARGIN = 1, FUN = mean))
+smdt$total <- apply(smdt[, 2:4], MARGIN = 1, FUN = sum)
+smdt$avg <- round(apply(smdt[, 2:4], MARGIN = 1, FUN = mean))
 smdt
 
 # 데이터 검증.
@@ -81,11 +81,11 @@ smdt$avg
 
 library('reshape2')
 
-df_year = cbind(data.frame(no = 1:4, year = 2016:2019),
+df_year <- cbind(data.frame(no = 1:4, year = 2016:2019),
                   matrix(round(runif(48), 3) * 100000, ncol = 12, dimnames = list(NULL, month.abb))) 
 df_year
 
-melt_year = melt(data = df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
+melt_year <- melt(data = df_year[,2:14], id.vars = "year", variable.name = 'month', value.name = 'saleamt')
 melt_year
 
 
