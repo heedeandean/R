@@ -1,5 +1,5 @@
 library(ggplot2)
-mpg = as.data.frame(ggplot2::mpg)
+mpg <- as.data.frame(ggplot2::mpg)
 
 # column
 # manufacturer: 제조사
