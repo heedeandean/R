@@ -24,16 +24,12 @@ while(TRUE) {
 while(TRUE) {
   x <- as.integer(readline(prompt = "Input the number: "))
   if (x <= 0) break
-  if (x == 1) {
-    print(0)
-    next
-  }
-  
+
   p2 <- 0
   p1 <- 1
   result <- paste(p2, p1)
   
-  while(x > 2) {
+  while(x > 1) {
     p <- p2 + p1
     p2 <- p1
     p1 <- p
@@ -44,7 +40,3 @@ while(TRUE) {
   }
   print(result)
 }
-
-
-
-
