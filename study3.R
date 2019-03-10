@@ -49,16 +49,16 @@ mpg %>%
 
 # data reset.
 
-mpg = as.data.frame(ggplot2::mpg)
+mpg <- as.data.frame(ggplot2::mpg)
 rm(mpg_t)
 rm(mt)
 
-t = table(mpg$fl)
-n = names(t)
+t <- table(mpg$fl)
+n <- names(t)
 n
 dput(n)
 
-fp = data.frame(fl = c("c", "d", "e", "p", "r"), 
+fp <- data.frame(fl = c("c", "d", "e", "p", "r"), 
                 type = c('CNG', 'diesel', 'E85', 'Premi', 'Reqular'),
                 price = c(1.33, 1.02, 0.92, 1.99, 1.22), stringsAsFactors = F)
 fp
@@ -70,12 +70,12 @@ class(mpg$fl)
 
 # 1안.
 
-mpg_t = left_join(mpg, fp[, c(1, 3)], by = c('fl' = 'fl')) %>% rename(fl_price = price)
+mpg_t <- left_join(mpg, fp[, c(1, 3)], by = c('fl' = 'fl')) %>% rename(fl_price = price)
 head(mpg_t)
 
 # 2안.
 
-mt = inner_join(mpg, fp[, c(1, 3)], by = c('fl' = 'fl')) %>% rename(fl_price = price)
+mt <- inner_join(mpg, fp[, c(1, 3)], by = c('fl' = 'fl')) %>% rename(fl_price = price)
 head(mt)
 
 dim(mpg_t)
