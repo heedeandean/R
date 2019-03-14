@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/476032/1018e7b81b644ee684dda9a430ba4ff0
+bundleId: https://api.rpubs.com/api/v1/document/476032/1018e7b81b644ee684dda9a430ba4ff0
+url: http://rpubs.com/heedeandean/476032
+when: 1552526289.8849
