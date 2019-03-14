@@ -64,11 +64,11 @@ head(midwest)
 
 m2 <- midwest %>% filter(poptotal <= 500000 & popasian <= 10000)
 
-ggplot(m2, aes(x = area, y = popasian))+
-       geom_point(aes(col = state, size = popasian))+
+ggplot(m2, aes(x = area, y = popasian)) +
+       geom_point(aes(col = state, size = popasian)) +
        geom_smooth(method = "auto", se = F) + 
        xlim(c(0, 0.1)) +
-       ylim(c(0, 10000))+
+       ylim(c(0, 10000)) +
        labs(subtitle = "Area Vs popasian", x = "Area", y = "popasian",
             title = "각 Area 별 아시아계 인구",
             caption = "Source : ggplot2::midwest") 
