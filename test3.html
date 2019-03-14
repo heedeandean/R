@@ -337,11 +337,11 @@ head(midwest)</code></pre>
 ## 6         8.179287          11.008586       0      AAR</code></pre>
 <pre class="r"><code>m2 &lt;- midwest %&gt;% filter(poptotal &lt;= 500000 &amp; popasian &lt;= 10000)
 
-ggplot(m2, aes(x = area, y = popasian))+
-       geom_point(aes(col = state, size = popasian))+
+ggplot(m2, aes(x = area, y = popasian)) +
+       geom_point(aes(col = state, size = popasian)) +
        geom_smooth(method = &quot;auto&quot;, se = F) + 
        xlim(c(0, 0.1)) +
-       ylim(c(0, 10000))+
+       ylim(c(0, 10000)) +
        labs(subtitle = &quot;Area Vs popasian&quot;, x = &quot;Area&quot;, y = &quot;popasian&quot;,
             title = &quot;각 Area 별 아시아계 인구&quot;,
             caption = &quot;Source : ggplot2::midwest&quot;) </code></pre>
