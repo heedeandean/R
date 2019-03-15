@@ -41,4 +41,5 @@ vignettes/*.pdf
 
 .sh
 .Rproj
+.Ruserdata
 .Rproj.user
