@@ -1,0 +1,98 @@
+# 1) 다음과 같이 미국의 범죄율을 한번에 작도하시오.
+
+library(ggplot2)
+library(dplyr)
+library(ggiraphExtra)
+library(tibble)
+library(maps)
+
+head(USArrests)
+str(USArrests)
+rownames(USArrests)
+
+chodata = rownames_to_column(USArrests, var = 'state')
+chodata$state = tolower(chodata$state)
+chodata$sta = substr(chodata$sta, 1, 3)
+chodata = data.frame(state = tolower(rownames(USArrests)), USArrests)
+head(chodata)
+
+usmap = map_data('state') 
+str(usmap)
+head(usmap)
+
+ggChoropleth(data = chodata,
+             aes(map_id = state),
+             map = usmap,
+             reverse = F,
+             interactive = T)
+
+
+# 2) 미국 범죄율의 Rape부분을 단계 구분도로 작성하시오.
+# (단, 툴팁은 그림과 같이 표현하고, 클릭시 해당 state의 wikipedia 페이지를 보이도록 
+# HTML로 저장하시오)
+
+tooltips = paste0(
+              sprintf("<p><strong>%s</strong></p>", as.character(chodata$state)),
+              paste0(sprintf('<p>%.0f / %.0f 만</p>', chodata$Rape, chodata$UrbanPop * 10)))
+
+sum(chodata$Rape)
+
+tooltips
+
+str(chodata)
+
+library(stringi)
+# tooltips = stringi::stri_enc_toutf8(tooltips)
+tooltips = stringi::stri_escape_unicode(tooltips)
+
+onclick = sprintf('window.open("http://en.wikipedia.org/wiki/%s")', as.character(chodata$state))
+onclick
+
+library(ggiraph)
+rc = ggplot(chodata, aes(data = Murder, map_id = state)) +
+        geom_map_interactive( 
+                aes(fill = Rape,
+                    data_id = state,
+                    tooltip = tooltips,
+                    onclick = onclick), 
+                map = usmap) +
+        expand_limits(x = usmap$long, y = usmap$lat) +
+        scale_fill_gradient2('Rape', low='red', high = "blue", mid = "green") +
+        labs(title="USA Rape")
+rc
+
+ggiraph(code = print(rc))
+girafe(ggobj = rc)
+
+
+# 3) 시도별(kormap1) 결핵환자수(kormaps2014::tbc)를 단계 구분도로 작성하시오.(우리나라)
+# (단, 환자수는 2006년부터 2015년 총합, NA인 지역은 0으로 표시할 것)
+
+library(dplyr)
+library(ggiraphExtra)
+library(ggplot2)
+library(kormaps2014)
+
+tbc = kormaps2014::tbc
+
+tbc$NewPts = ifelse(is.na(tbc$NewPts), 0, tbc$NewPts)
+tbc
+
+tbc = tbc %>% 
+        filter(year %in% 2006:2015) %>%
+        group_by(name1, code) %>%
+        summarise(s = sum(NewPts))
+tbc
+
+tooltips2 = sprintf("<p>결핵 환자 수 : %.0f</p>", tbc$s)
+tooltips2 = stringi::stri_enc_toutf8(tooltips2)
+
+result = ggplot(tbc, aes(data = s, map_id = code)) +
+            geom_map_interactive(
+              aes(fill = s, tooltip = tooltips2), 
+              map = kormap1) +
+            expand_limits(x = kormap1$long, y = kormap1$lat) +
+            scale_fill_gradient2('결핵 환자 수', low='red', high = "blue", mid = "green") +
+            labs(title="시도별 결핵 환자 수")
+ggiraph(code = print(result))
+girafe(ggobj = result)
