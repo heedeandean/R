@@ -98,7 +98,7 @@ tbc = tbc %>%
         summarise(s = sum(NewPts))
 tbc
 
-tooltips2 = sprintf("<p>결핵 환자 수 : %.0f</p>", tbc$s)
+tooltips2 = sprintf("<p>결핵 환자 수 : %.0f명</p>", tbc$s)
 tooltips2 = stringi::stri_enc_toutf8(tooltips2)
 
 result = ggplot(tbc, aes(data = s, map_id = code)) +
