@@ -1,4 +1,4 @@
-# 1) 다음과 같이 미국의 범죄율을 한번에 작도하시오.
+# 1) 미국의 범죄율(Murder, Assault, UrbanPop, Rape)을 한번에 작도하시오.
 
 library(ggplot2)
 library(dplyr)
@@ -66,7 +66,7 @@ girafe(ggobj = rc)
 
 
 # 3) 시도별(kormap1) 결핵환자수(kormaps2014::tbc)를 단계 구분도로 작성하시오.(우리나라)
-# (단, 환자수는 2006년부터 2015년 총합, NA인 지역은 0으로 표시할 것)
+# (단, 환자수는 2006년부터 2015년 총합, NA인 지역은 0으로 표시할 것.)
 
 library(dplyr)
 library(ggiraphExtra)
