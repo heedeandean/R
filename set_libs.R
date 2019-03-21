@@ -12,6 +12,11 @@ library(dygraphs)
 library(xts)
 library(sqldf)
 
+library(tm)
+library(SnowballC)
+library(RColorBrewer)
+library(wordcloud)
+
 # load('data/kdata.rda')
 # load('data/data_eng.rda')
 # load('data/d.rda')
