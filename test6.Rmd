@@ -1,0 +1,73 @@
+---
+title: "텍스트 마이닝."
+author: "um heejin"
+date: "2019년 4월 9일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1. 원하는 검색어(다이어트)로 트위터 트윗을 가져와 워드클라우드를 작도하시오.
+#### (주의: secret key는 노출하지 마시오)
+
+```{r, warning = F, message = F}
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk1.8.0_191/")
+library(rJava)
+library(KoNLP)
+library(twitteR); library(RCurl); library(RJSONIO); library(stringr)
+library(streamR); library(ROAuth)
+
+# tweets_diet <- searchTwitter(enc2utf8('다이어트'), n = 100, lan = 'ko', 
+#                        since = '2019-03-11', until = '2019-03-31')
+# 
+# save(tweets_diet, file = 'data/tweets_diet.rda')
+# rm(tweets_diet)
+load("data/tweets_diet.rda")
+
+tdf_diet <- twListToDF(tweets_diet)  
+head(tdf_diet)
+
+
+# text만 남김.
+
+dtw <- unique(tdf_diet$text)     
+head(dtw)
+
+
+# 불용어 제거
+
+dtw <- gsub("[[:cntrl:]]", "", dtw)                     # 제어문자(\n, \t등) 제거
+dtw <- gsub("http[s]?://[[:alnum:].\\/]+", "", dtw)     # link 제거
+dtw <- gsub("&[[:alnum:]]+;", "", dtw)                  # escape(&amp; &lt;등) 제거
+dtw <- gsub("@[[:alnum:]]+[:]?", "", dtw)               # 트위터 계정 부분 제거
+dtw <- gsub("[ㄱ-ㅎㅏ-ㅣ]","",dtw)                      # 한글 불용어(ㅋㅋㅎㅎ ㅠㅜ등) 제거
+dtw <- gsub("<.*>", "", enc2native(dtw))                # EMO(/U00000f등) 제거
+dtw <- gsub("\\s{2,}", " ", dtw)                        # 2개이상 공백을 한개의 공백으로 처리
+dtw <- gsub("\\s{2,}", " ", dtw)    
+dtw <- gsub("RT", "", dtw)   
+dtw <- gsub("♭", "", dtw)   
+dtw <- gsub("[[:punct:]]", "", dtw)                     # 특수 문자 제거 (앞의 처리 때문에 마지막에 처리)
+
+head(dtw)
+
+diet <- sapply(dtw, extractNoun, USE.NAMES = F)
+head(diet)
+
+dul <- unlist(diet)
+dul <- dul[nchar(dul) > 1]
+diet1 <- table(dul)
+names(diet1)
+length(diet1)
+head(diet1)
+diet2 <- head(sort(diet1, decreasing = T), 100)
+head(diet2)
+
+library(RColorBrewer)
+library(wordcloud)
+
+pal <- brewer.pal(9, "Set1")
+wordcloud(names(diet2), freq = diet2, scale = c(5,0.5), rot.per = 0, 
+          min.freq = 2, random.order = F, random.color = T, colors = pal)
+```

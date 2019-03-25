@@ -14,8 +14,7 @@ library(sqldf)
 
 library(tm)
 library(SnowballC)
-library(RColorBrewer)
-library(wordcloud)
+
 
 # load('data/kdata.rda')
 # load('data/data_eng.rda')
@@ -38,3 +37,7 @@ library(rJava)
 library(KoNLP)
 library(twitteR); library(RCurl); library(RJSONIO); library(stringr)
 library(streamR); library(ROAuth)
+
+
+library(RColorBrewer)
+library(wordcloud)

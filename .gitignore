@@ -42,8 +42,8 @@ vignettes/*.pdf
 gs.sh
 .Rproj
 .Ruserdata
-.Rproj.user
 rsconnect
 
 .httr-oauth
 twitter.R
+.Rproj.user
