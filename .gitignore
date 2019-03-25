@@ -39,11 +39,11 @@ vignettes/*.pdf
 
 # End of https://www.gitignore.io/api/r
 
-.gs.sh
+.sh
 .Rproj
 .Ruserdata
 .Rproj.user
 rsconnect
 
 .httr-oauth
-.twitter.R
+twitter.R
