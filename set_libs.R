@@ -30,3 +30,11 @@ conn = dbConnect(drv, host='127.0.0.1', port=3306,
 dbSendQuery(conn, 'set character set utf8') 
 dbListTables(conn)   
 dbDisconnect(conn); dbUnloadDriver(drv)
+
+
+# 텍스트 마이닝.
+
+library(rJava)
+library(KoNLP)
+library(twitteR); library(RCurl); library(RJSONIO); library(stringr)
+library(streamR); library(ROAuth)
