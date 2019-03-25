@@ -39,7 +39,7 @@ vignettes/*.pdf
 
 # End of https://www.gitignore.io/api/r
 
-.sh
+gs.sh
 .Rproj
 .Ruserdata
 .Rproj.user
