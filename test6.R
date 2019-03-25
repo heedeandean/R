@@ -36,6 +36,7 @@ dtw <- gsub("\\s{2,}", " ", dtw)                        # 2개이상 공백을 �
 dtw <- gsub("\\s{2,}", " ", dtw)    
 dtw <- gsub("RT", "", dtw)   
 dtw <- gsub("♭", "", dtw)  
+dtw <- gsub("★", "", dtw) 
 dtw <- gsub("[[:punct:]]", "", dtw)                     # 특수 문자 제거 (앞의 처리 때문에 마지막에 처리)
 
 head(dtw)
