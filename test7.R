@@ -31,6 +31,7 @@ removeStopword = function(t) {
   t = gsub("[[:cntrl:]]", "", t) 
   t = gsub("http[s]?://[[:alnum:].\\/]+", "", t) 
   t = gsub("&[[:alnum:]]+;", "", t)
+  t = gsub("[[:alnum:]]+@[[:alnum:].]+", "", t)
   t = gsub("@[[:alnum:]]+", "", t)
   t = gsub("@[[:alnum:]]+[:]?", "", t)
   t = gsub("[ㄱ-ㅎㅏ-ㅣ]","",t) 
@@ -38,6 +39,7 @@ removeStopword = function(t) {
   t = gsub("[[:punct:]]", "", t)  
   t = gsub("https", "", t)
   t = gsub("RT", "", t)
+  t = gsub("바로가기", "", t)
   t = gsub("\\s{2,}", " ", t) 
   gsub('\\p{So}|\\p{Cn}', '', t, perl = TRUE)
 }
