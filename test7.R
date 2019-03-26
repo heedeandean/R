@@ -55,8 +55,6 @@ for (i in 1:length(news)) {
                       "", news[[i]][1])
   news[[i]][1] = gsub("때문",
                       "", news[[i]][1])
-  news[[i]][1] = gsub("하기",
-                      "", news[[i]][1])
   news[[i]][1] = gsub("들이",
                       "", news[[i]][1])
 }
