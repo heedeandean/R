@@ -1,5 +1,5 @@
 ---
-title: "텍스트 마이닝."
+title: "텍스트 마이닝"
 author: "um heejin"
 date: "2019년 4월 9일"
 output: html_document

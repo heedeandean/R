@@ -32,12 +32,17 @@ dbDisconnect(conn); dbUnloadDriver(drv)
 
 
 # 텍스트 마이닝.
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk1.8.0_191/")
 
 library(rJava)
 library(KoNLP)
 library(twitteR); library(RCurl); library(RJSONIO); library(stringr)
 library(streamR); library(ROAuth)
 
-
 library(RColorBrewer)
 library(wordcloud)
+
+library(arules); library(igraph); library(combinat)
+
+library(arulesViz); library(visNetwork)
+library(rvest); library(httr)
