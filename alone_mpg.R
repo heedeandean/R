@@ -1,4 +1,4 @@
-library(ggplot2)
+library(ggplot2) 
 library(dplyr)
 mpg <- as.data.frame(ggplot2::mpg)
 
@@ -177,7 +177,7 @@ mpg[c(29, 43, 129, 203), "cty"] <- c(3, 4, 39, 42)
 
 table(mpg$drv) # 이상치 확인.
 
-
+mpg$drv <- ifelse(mpg$drv %in% c('4', 'f', 'r'), mpg$drv, NA)
 
 mpg %>% filter(is.na(drv))
 
