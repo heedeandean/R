@@ -1,4 +1,5 @@
 library(ggplot2)
+library(dplyr)
 mpg <- as.data.frame(ggplot2::mpg)
 midwest <- as.data.frame(ggplot2::midwest) # midwest : 미국 지역별 인구통계 데이터.
 
@@ -14,6 +15,11 @@ ggplot(data = mpg, aes(x = cty, y = hwy)) +
 
 # 2) [midwest 데이터] x축은 poptotal(전체 인구), y축은 popasian(아시아인 인구)로 된 산점도.
 #    (전체 인구는 50만 명 이하, 아시아인 인구는 1만 명 이하인 지역만 표시.)
+
+ggplot(data = midwest, aes(x = poptotal, y = popasian)) +
+  geom_point() +
+  xlim(0, 500000) +
+  ylim(0, 10000)
 
 options(scipen = 99) # 축을 정수로 표현.
 options(scipen = 0) # 축을 지수로 표현(default).
