@@ -1,0 +1,121 @@
+---
+title: "test8"
+author: "um heejin"
+date: "2019년 3월 8일"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1) '죽반과 매반의 수학성적은 차이가 없다' 라는 가설을 검증하시오.
+
+```{r, warning = F, message = F}
+
+# 1. 데이터 준비
+
+load('../data/d.rda')
+head(d)
+library(dplyr)
+
+jmmath <- d %>% filter(cls %in% c('죽', '매')) %>% select(cls, math)
+head(jmmath)
+jmmath$cls <- factor(jmmath$cls, levels = c('죽','매'), labels = c('죽', '매'))
+jmmath$cls
+
+# 2. 데이터 확인 (기술통계 + 그래프)
+
+library(psych) 
+describeBy(jmmath$math, jmmath$cls, mat = T)
+
+boxplot(jmmath$math ~ jmmath$cls)
+layout(matrix(c(1,1,2,3), 2, 2, byrow = T))
+boxplot(jmmath$math ~ jmmath$cls)
+hist(jmmath$math[jmmath$cls == '죽'])
+hist(jmmath$math[jmmath$cls == '매'])
+orgpar <- par(no.readonly = T)
+par(orgpar)
+
+# 3. 등분산 검정
+
+var.test(jmmath$math ~ jmmath$cls, data = jmmath)
+
+# 4. t-test 수행
+
+t.test(jmmath$math ~ jmmath$cls, data = jmmath,
+       alternative = c("two.sided"),
+       var.equal = T,                 # 등분산검증의 p-value < 0.05 이면 False로!
+       conf.level = 0.95)
+
+# 5. 결과 그래프 
+
+mu <- 59.4; se <- 1.975140; rn <- sort(rnorm(1000, mu, se))
+plot(rn, dnorm(rn, mu, se), col = 'green', type = 'l', main = '평균점수',
+     xlim = c(50, 80), ylim = c(0, 0.25)) 
+abline(v = mu, col = "green", lty = 5)
+par(new = T)  
+mu <- 64.28; se <- 1.952381; rn <- sort(rnorm(1000, mu, se))
+plot(rn, dnorm(rn, mu, se), col = 'red', type = 'l', main = '평균점수',
+     xlim = c(50, 80), ylim = c(0, 0.25))
+abline(v = mu, col = "red", lty = 5)
+```
+
+
+### 2) 4개반 수학성적의 유사도(동질의 정도)를 분석하시오.
+
+```{r, warning = F, message = F}
+describeBy(d$math, d$cls, mat = T)
+
+# 3. 그래프로 확인하기
+
+library(ggplot2)
+ggplot(d, aes(x = cls, y = kor)) +
+  geom_boxplot(outlier.color = 'blue') +
+  ggtitle("각반 국어 성적")
+
+ggplot(d, aes(x = math)) +
+  geom_histogram(binwidth = 10, col = 'white') +
+  facet_grid(. ~ d$cls)   # 그룹별로 그려라!
+
+# 4-1. 등분산(분산의 동질성) 검정 (p-value > 0.05 면 등분산)
+
+bartlett.test(d$math ~ d$cls, data = d)  # ⇒ p-value = 0.8497 ⇒ 약 85% 동질하다
+
+aaa <- aov(d$math ~ d$cls, data = d)
+summary(aaa)   
+
+TukeyHSD(aaa)
+
+plot(TukeyHSD(aaa)) 
+
+
+draw <- function(rn, mu, se, col) {
+  plot(rn, dnorm(rn, mu, se), col = col, type = 'l',
+       xlim = c(50, 80), ylim = c(0, 0.25))
+  abline(v = mu, col = col, lty = 5)
+}
+
+mu <- 62.6; se <- 2.097331; rn <- sort(rnorm(1000, mu, se))
+draw(rn, mu, se, 'red')
+par(new = T)
+mu <- 59.4; se <- 1.975140; rn <- sort(rnorm(1000, mu, se))
+draw(rn, mu, se, 'blue')
+par(new = T)
+mu <- 64.2833; se <- 1.9523; rn <- sort(rnorm(1000, mu, se))
+draw(rn, mu, se, 'green')
+par(new = T)
+mu <- 66.6; se <- 1.964653; rn <- sort(rnorm(1000, mu, se))
+draw(rn, mu, se, 'black')
+
+legend('topright',
+       legend = c('국', '난', '매', '죽'),
+       pch = 8,
+       col = c('red', 'blue', 'green', 'black'),
+       bg = 'gray')
+```
+
+
+###
+
+```{r, warning = F, message = F}
+```
