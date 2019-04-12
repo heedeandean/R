@@ -1,5 +1,5 @@
 ---
-title: "test8"
+title: "통계 기반 데이터 분석"
 author: "um heejin"
 date: "2019년 3월 8일"
 output: html_document
