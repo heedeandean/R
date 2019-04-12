@@ -7,6 +7,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# 문항 1.
 
 ### 1) '죽반과 매반의 수학성적은 차이가 없다' 라는 가설을 검증하시오.
 
@@ -69,9 +70,9 @@ describeBy(d$math, d$cls, mat = T)
 # 3. 그래프로 확인하기
 
 library(ggplot2)
-ggplot(d, aes(x = cls, y = kor)) +
+ggplot(d, aes(x = cls, y = math)) +
   geom_boxplot(outlier.color = 'blue') +
-  ggtitle("각반 국어 성적")
+  ggtitle("각반 수학 성적")
 
 ggplot(d, aes(x = math)) +
   geom_histogram(binwidth = 10, col = 'white') +
@@ -115,7 +116,51 @@ legend('topright',
 ```
 
 
-###
+# 문항 2.
+
+### 1) 전교생의 국어성적과 영어성적에 대한 상관분석(Correlation)을 수행하시오.
 
 ```{r, warning = F, message = F}
+# 1. 데이터 준비
+cdata <- d %>% select(kor, math)
+head(cdata)
+
+# 2. 기술 통계 확인
+describe(cdata)
+
+# 3. 그래프로 데이터 확인하기
+pairs.panels(cdata)          # 연관계수 확인
+
+# 4. 상관분석
+cor(cdata, use = "complete.obs",   # 결측치(NA) 제외
+      method = c("pearson"))         # 모수 통계  cf. 비모수(30개 미만)의 경우 spearman)
+
+# 5. 결과 그래프 
+plot(kor ~ math, data = cdata)
+abline(lm(kor ~ math, data = cdata), col = 'red') 
+```
+
+### 2) mpg데이터의 displ, cyl, trans, cty, hwy 중
+###    1999년과 2008년 두 해의 고객 만족도가 0과 1이라고 했을 때,
+###    어떤 요소가 만족도에 많은 기여를 했는지 로지스틱 회귀분석하시오.
+
+```{r, warning = F, message = F}
+# 1. 데이터 준비 : 1999년과 2008년 두 해의 만족도가 0과 1 → 영향을 준 요인은??
+unique(mpg$trans); unique(mpg$year);
+cdata2 <- mpg %>%
+            mutate(trs = ifelse(substr(trans, 1, 4) == 'auto', 1, 0), 
+                   y = ifelse(year == 1999, 0, 1)) %>%
+            select(y, displ, cyl, trs, cty, hwy)
+
+# 2. 기본 통계치 확인
+describe(cdata2)
+pairs.panels(cdata2)
+
+# 3. 분석
+glmdata <- glm(y ~ displ + cyl + cty + hwy + trs, family = binomial, data = cdata2)
+summary(glmdata)  # Estimate: 기울기(비례/반비례), Pr: 0.05보다 작으면 영향이 있다
+plot(glmdata)
+
+# 4. coefficients(기울기+절편)와 confint(신뢰구간)로 LOR(Log Odd Ratio) 구하기
+round(exp(cbind(LOR = coef(glmdata), confint(glmdata))), 2)
 ```
