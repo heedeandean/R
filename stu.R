@@ -1,40 +1,48 @@
-df <- data.frame(sex = c("M", "F", NA, "M", "F"),
-                 score = c(5, 4, 3, 4, NA))
-df
-table(is.na(df))
-table(is.na(df$sex))
-mean(df$score)
+library(ggiraphExtra)
+library(tibble)
+library(ggplot2)
 
-df_nomiss <- df %>% filter(!is.na(score) & !is.na(sex))
-df_nomiss2 <- na.omit(df)
-df_nomiss2
+crime <- rownames_to_column(USArrests, var = "state")
+crime$state <- tolower(crime$state)
+str(crime)
 
-mean(df$score, na.rm = T)
-exam[c(3, 8, 15), "math"] <- NA
-exam %>% summarise(mean_math = mean(math, na.rm = T))
-mean(exam$math, na.rm = T)
-exam$math <- ifelse(is.na(exam$math), 55, exam$math)
-table(is.na(exam$math))
+states_map <- map_data("state")
+ggChoropleth(data = crime, aes(fill = Murder, map_id = state), map = states_map, interactive = T)
 
-mpg[c(65, 124, 131, 153, 212), "hwy"] <- NA
+library(kormaps2014)
+str(changeCode(korpop1))
+library(dplyr)
+korpop1 <- rename(korpop1,
+                  pop = 총인구_명,
+                  name = 행정구역별_읍면동)
+ggChoropleth(data = korpop1,
+             aes(fill = pop,
+                 map_id = code,
+                 tooltip = name),
+             map = kormap1,
+             interactive = T)
 
-table(is.na(mpg$drv))
-table(is.na(mpg$hwy))
+ggChoropleth(data = tbc,
+             aes(fill = NewPts,
+                 map_id = code,
+                 tooltip = name),
+             map = kormap1,
+             interactive = T)
 
-mpg %>% 
-  filter(!is.na(hwy)) %>% 
-  group_by(drv) %>% 
-  summarise(mean_hwy = mean(hwy))
+install.packages("plotly")
+library(plotly)
+library(ggplot2)
+p <- ggplot(data = mpg, aes(x = displ, y = hwy, col = drv)) + geom_point()
+ggplotly(p)
 
-outlier <- data.frame(sex = c(1, 2, 1, 3, 2, 1),
-                      score = c(5, 4, 3, 4, 2, 6))
-table(outlier$sex)
-outlier$sex <- ifelse(outlier$sex == 3, NA, outlier$sex)
-outlier$score <- ifelse(outlier$score > 5, NA, outlier$score)
-outlier %>% 
-  filter(!is.na(sex) & !is.na(score)) %>% 
-  group_by(sex) %>% 
-  summarise(mean_score = mean(score))
+p <- ggplot(data = diamonds, aes(x = cut, fill = clarity)) + geom_bar(position = "dodge")
+p
+ggplotly(p)
 
-mpg <- as.data.frame(ggplot2::mpg)
-boxplot(mpg$hwy)$stats
+library(dygraphs)
+economics <- ggplot2::economics
+head(economics)
+library(xts)
+eco <- xts(economics$unemploy, order.by = economics$date)
+head(eco)
+dygraph(eco) %>% dyRangeSelector()
