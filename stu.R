@@ -9,4 +9,3 @@ welfare <- raw_welfare
 head(welfare)
 View(welfare)
 dim(welfare)
-dddddd
