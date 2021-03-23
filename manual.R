@@ -7,7 +7,8 @@
 # CTRL + RUN : RUN
 # CTRL + 1 : script 창
 # CTRL + 2 : console 창 
-# CTRL + L : console 창 지우기
+# CTRL + L : console 창 전체 삭제 
+# ESC      : console 창 라인 삭제 
 # CTRL + Enter : 한 줄 실행 (블록지정만큼 실행)
 
 # 변수명
