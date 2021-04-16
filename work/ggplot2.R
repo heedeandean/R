@@ -95,7 +95,7 @@ diamonds %>%
   geom_boxplot(aes(group=cut)) +
   coord_flip()
 
-# carat별 price를, color가 cut인 산점도,배경은흰색, title은'carat과 price의 관계 x축은'carat'y축은'price', legend는 아래로, y축값에'$'와천원단위로','추가해서시각화.
+# carat별 price를, color가 cut인 산점도,배경은흰색, title은'carat과 price의 관계' x축은'carat'y축은'price', legend는 아래로, y축값에'$'와천원단위로','추가해서시각화.
 diamonds %>% 
   ggplot(aes(x=carat, y=price)) +  # Aesthetics
   geom_point(aes(color=cut)) +

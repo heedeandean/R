@@ -1,7 +1,6 @@
 getwd()
 
 library(dplyr)
-library(ggplot2)
 
 mydata <- read.csv("./Data/sampledata.csv")
 
@@ -12,7 +11,7 @@ str(mydata)
 
 # Index와 State~Y2008 까지 선택.
 mydata %>% 
-  select(Index, State:Y2008) %>% 
+  select(Index:Y2008) %>% 
   head()
 
 # Index와 State column제거하고 출력
@@ -22,7 +21,7 @@ mydata %>%
   
 # Index와 State~Y2008 column을 제거하고 출력.
 mydata %>% 
-  select(-Index, -(State:Y2008)) %>% 
+  select(-(Index:Y2008)) %>% 
   head()
 
 # 모든 column 을 출력
@@ -108,15 +107,23 @@ mydata %>%
 # =========================================================
 
 ## 5) rank
-# min_rank() 를 이용, Index별로 Y2015 column값중 2번째로 작은 값을 구하기.
 
 x <- c(1, 1, 1, 5, 5, 9, 7)
 
-row_number(x) # 결과가 1 2 3 4 5 7 6
+# 결과가 1 2 3 4 5 7 6 이 나오도록
+row_number(x) 
 
-min_rank(x) #결과가 1 1 1 4 4 7 6이 나오도록
+#결과가 1 1 1 4 4 7 6 이 나오도록
+min_rank(x) 
 
-dense_rank(x) # 결과가 1 1 1 2 2 4 3이 나오도록
+# 결과가 1 1 1 2 2 4 3 이 나오도록
+dense_rank(x) 
+
+# min_rank() 를 이용, Index별로 Y2015 column값중 2번째로 작은 값을 구하기
+mydata %>% 
+  group_by(Index) %>% 
+  filter(min_rank(Y2015) == 2) %>% 
+  select(Y2015)
 
 # =========================================================
 
@@ -126,7 +133,7 @@ mydata %>%
   mutate(change=Y2015/Y2014) %>% 
   head()
   
-# Y2015 column 값을 Y2014 column 값으로 나누어 change column만으로 표현
+# Y2015 column 값을 Y2014 column 값으로 나누어 change column만 출력.
 mydata %>% 
   transmute(change=Y2015/Y2014) %>% 
   head()
