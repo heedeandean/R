@@ -11,18 +11,15 @@ str(mydata)
 
 # Index와 State~Y2008 까지 선택.
 mydata %>% 
-  select(Index:Y2008) %>% 
-  head()
+  select(Index:Y2008)
 
 # Index와 State column제거하고 출력
 mydata %>% 
-  select(-Index, -State) %>% 
-  head()
+  select(-Index, -State) 
   
 # Index와 State~Y2008 column을 제거하고 출력.
 mydata %>% 
-  select(-(Index:Y2008)) %>% 
-  head()
+  select(-(Index:Y2008))
 
 # 모든 column 을 출력
 mydata %>% 
@@ -30,8 +27,7 @@ mydata %>%
 
 # 상관분석할때 목적변수를 앞에 놔야 하기 때문에, 그때 everything()사용
 mydata %>% 
-  select(State, everything()) %>% 
-  head()
+  select(State, everything()) 
 
 # iris data에서 factor형 data의 column만 선택하기.
 str(iris)
@@ -43,8 +39,7 @@ iris %>% select_if(is.factor)
 
 # "Index" column을 "Index1"으로 변경해서 출력
 mydata %>% 
-  rename(Index1 = Index) %>% 
-  head()
+  rename(Index1 = Index)
 
 # =========================================================
 
@@ -60,9 +55,7 @@ mydata %>%
 
 # 
 mydata %>% 
-  filter(!Index %in% c('A', 'C')) %>% 
-  head()
-
+  filter(!Index %in% c('A', 'C'))
 
 # Index가 'A' or 'C' 이며,  Y2002 column이 1300000보다 큰 row만 출력
 mydata %>% 
@@ -74,21 +67,20 @@ mydata %>%
 
 # Y2015 column의 평균과 중앙값.
 mydata %>% 
-  summarise(Y2015_mean = mean(Y2015)
-            , Y2015_median = median(Y2015))
+  summarise(Y2015_mean = mean(Y2015), 
+            Y2015_median = median(Y2015))
 
-# Y2005, Y2006 column에 대한 개수, mean, median 을 계산하여라.
+# Y2005, Y2006 column에 대한 mean, median 을 계산하여라.
 mydata %>% 
-  summarise_at(vars(Y2005, Y2006)
-               , list(mean=~mean(.), median=~median(.)))
+  summarise_at(vars(Y2005, Y2006), 
+               list(mean=~mean(.), median=~median(.)))
 
 
 # Index 별로, Y2011~Y2015까지의 column을 각각 개수(n())와 평균(mean(., na.rm=TRUE))을 구할것.
 mydata %>% 
   group_by(Index) %>% 
-  summarise_at(vars(Y2011:Y2015)
-               , list(n = ~n(), mean=~mean(., na.rm=TRUE))) %>% 
-  head()
+  summarise_at(vars(Y2011:Y2015), 
+               list(n = ~n(), mean=~mean(., na.rm=TRUE)))
 
 # =========================================================
 
@@ -96,13 +88,11 @@ mydata %>%
 
 # Index와 그리고 Y2011 column으로 sorting
 mydata %>% 
-  arrange(Index, Y2011) %>% 
-  head()
+  arrange(Index, Y2011)
 
 # Index는 내림차순으로 Y2012는 올림차순으로 sorting.
 mydata %>% 
-  arrange(desc(Index), Y2012) %>% 
-  head()
+  arrange(desc(Index), Y2012) 
 
 # =========================================================
 
@@ -130,20 +120,16 @@ mydata %>%
 ## 6) mutate
 # Y2015 column 값을 Y2014 column 값으로 나누어 기존변수에 change column으로 추가할것.
 mydata %>% 
-  mutate(change=Y2015/Y2014) %>% 
-  head()
+  mutate(change=Y2015/Y2014)
   
 # Y2015 column 값을 Y2014 column 값으로 나누어 change column만 출력.
 mydata %>% 
-  transmute(change=Y2015/Y2014) %>% 
-  head()
+  transmute(change=Y2015/Y2014)
 
 # 모든 변수 값에 1000을 곱하여 새로운 (new_변수명)변수로 생성할것.
 mydata %>% 
-  mutate_if(is.numeric, list(new=~.*1000)) %>% 
-  head()
+  mutate_if(is.numeric, list(new=~.*1000)) 
 
 # 모든 변수 값에 1000을 곱하여 기존변수에 넣기.
 mydata %>% 
-  mutate_if(is.numeric, list(~.*1000)) %>% 
-  head()
+  mutate_if(is.numeric, list(~.*1000)) 
