@@ -39,7 +39,7 @@ diamonds %>%
   geom_point(aes(color=cut, size=table)) # Geometrics
 
 
-# carat별 price를, group이 cut인 boxplot으로
+# carat별 price를, group과 color이 cut 인 boxplot으로
 diamonds %>% 
   ggplot(aes(x=carat, y=price)) +  # Aesthetics
   geom_boxplot(aes(group=cut, color=cut)) # Geometrics
@@ -144,20 +144,20 @@ diamonds %>%
 diamonds %>% 
   ggplot(aes(x = carat, y = price)) +
   geom_point() +
-  facet_grid(.~ cut)
+  facet_grid(~cut)
 
 # cut, color 별로 가로축으로 분리
 # carat별 price를, 산점도로, cut과 color로 가로로 세분화
 diamonds %>% 
   ggplot(aes(x = carat, y = price)) +
   geom_point() +
-  facet_grid(.~ cut+color)
+  facet_grid(~cut+color)
 
 # carat별 price를, 산점도로, cut별로 가로세로 세분화
 diamonds %>% 
   ggplot(aes(x = carat, y = price)) +
   geom_point() +
-  facet_wrap(.~ cut)
+  facet_wrap(~cut)
 
 # 5. Statistics
 # cut별 carat을, y축이 평균값인 bar graph로.

@@ -126,7 +126,7 @@ mydata %>%
 mydata %>% 
   transmute(change=Y2015/Y2014)
 
-# 모든 변수 값에 1000을 곱하여 새로운 (new_변수명)변수로 생성할것.
+# 모든 변수 값에 1000을 곱하여 새로운 (변수명_new)변수로 생성할것.
 mydata %>% 
   mutate_if(is.numeric, list(new=~.*1000)) 
 

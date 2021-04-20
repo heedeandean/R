@@ -90,7 +90,7 @@ mydata %>%
 # 모든 column 을 출력
 mydata %>% select(everything())
 
-# "I" 문자를 포함하는 column 만 출력
+# "I" 문자를 포함하는 column명만 출력
 mydata %>% 
   select(contains('I'))
 
@@ -145,7 +145,9 @@ mydata %>%
                list(mean=mean, median=median),
                na.rm=TRUE)
 
-# 원래 값에서 평균을 빼고, 그 분산구하기 mydata2 <- data.frame(X1=sample(1:100, 100), X2=runif(100))
+# 원래 값(X1, X2)에서 평균을 빼고, 그 분산구하기)
+mydata2 <- data.frame(X1=sample(1:100, 100), X2=runif(100))
+
 mydata2 %>% 
   summarise_at(vars(X1, X2), list(function(x) var(x-mean(x))))
 
@@ -153,9 +155,15 @@ mydata2 %>%
 mydata %>% 
   mutate_if(is.numeric, list(mean=~mean(.), median=~median(.)))
 
+mydata %>% 
+  summarise_if(is.numeric, list(mean=~mean(.), median=~median(.)))
+
 # 숫자인 값들만 평균을 구하는데 NA 값은 제외시키고 구할것.
 mydata %>% 
   mutate_if(is.numeric, list(mean=~mean(., na.rm=TRUE)))
+
+mydata %>% 
+  summarise_if(is.numeric, list(mean=~mean(., na.rm = TRUE)))
 
 # iris데이터 Species별로, mean, med, sd 를 각각 적용한 변수를 생성
 iris %>% 
@@ -224,7 +232,7 @@ mydata %>%
 mydata %>% 
   transmute(change = Y2015/Y2014)
 
-# 모든 변수 값에 1000을 곱하여 새로운 (new_변수명)변수로 생성할것.
+# 모든 변수 값에 1000을 곱하여 새로운 (변수명_new)변수로 생성할것.
 mydata %>% 
   mutate_if(is.numeric, list(new=~.*1000))
 
@@ -234,11 +242,11 @@ mydata %>%
 
 # Y2008~Y2010 변수값들의 순위를 계산해서 새로운변수로 추가한다.
 mydata %>% 
-  mutate_at(vars(Y2008:Y2010), list(new_var=~min_rank(.)))
+  mutate_at(vars(Y2008:Y2010), list(rank=~min_rank(.)))
 
 # Y2008~Y2010 변수값들의 내림차순 순위를 계산해서 새로운변수로 추가한다.
 mydata %>% 
-  mutate_at(vars(Y2008:Y2010), list(new_var=~min_rank(desc(.))))
+  mutate_at(vars(Y2008:Y2010), list(rank=~min_rank(desc(.))))
 
 # Index별, Y2015년도에 가장높은 값을 가진 State를 출력하기.
 mydata %>% 
@@ -275,30 +283,38 @@ inner_join(df1, df2, by='ID')
 # df1, df2 에서 df1을 기준으로 join (key는 ID column)
 left_join(df1, df2, by='ID')
 
-# mtcars$model <- rownames(mtcars), first <- mtcars[1:20, ] second <- mtcars[10:32, ], row방향으로 같은 데이터만.
-class(mtcars)
 
+mtcars$model <- rownames(mtcars)
+first <- mtcars[1:20, ] 
+second <- mtcars[10:32, ]
+# 1. row방향으로 같은 데이터만.
 intersect(first, second)
 
+# 2. row방향으로 first에서second빼기
+setdiff(first, second)
 
-# x <- data.frame(ID=1:6, ID1=1:6) y <- data.frame(ID=6:7, ID1=6:7), row방향으로 합치기(겹치는데이터한번만출력)
+x <- data.frame(ID=1:6, ID1=1:6)
+y <- data.frame(ID=6:7, ID1=6:7)
+# 1. row방향으로 합치기(겹치는데이터한번만출력)
 union(x, y)
 
-# x <- data.frame(ID=1:6, ID1=1:6) y <- data.frame(ID=6:7, ID1=6:7), row방향으로 합치기(겹치는데이터도모두출력)
+# 2. row방향으로 합치기(겹치는데이터도모두출력)
 union_all(x, y)
 bind_rows(x, y)
 
-# mtcars$model <- rownames(mtcars), first <- mtcars[1:20, ] second <- mtcars[10:32, ], row방향으로 first에서second빼기
-setdiff(first, second)
 
-# df3 <- c(-10, 2, NA) # 음수는 negative, 양수는 positive, NA 는 missing value로 표시할것
+df3 <- c(-10, 2, NA)
+# 음수는 negative, 양수는 positive, NA 는 missing value로 표시할것
 if_else(df3 < 0, 'negative', 'positive', 'missing value')
 
-# df <- data.frame(x=c(1, 5, 6, NA)), 5보다작으면 +1, 같거나크면+2, 둘다아니면0으로 column 추가
+
+df <- data.frame(x=c(1, 5, 6, NA))
+# 5보다작으면 +1, 같거나크면+2, 둘다아니면0으로 column 추가
 df %>% 
   mutate(new_var = if_else(x < 5, x+1, x+2, 0))
 
-# mydf <- data.frame(x = c(1:5, NA)), 1은 one, 2는 two, 나머지 숫자는 other로 표시할것, na는 'missing'으로 표기
+mydf <- data.frame(x = c(1:5, NA))
+# 1은 one, 2는 two, 나머지 숫자는 other로 표시할것, na는 'missing'으로 표기
 mydf %>% 
   mutate(new_var = if_else(is.na(x), 'missing', if_else(x == 1, 'one', if_else(x == 2, 'two', 'other'))))
 
@@ -308,21 +324,27 @@ mydata %>%
   mutate(Max = max(Y2012, Y2013, Y2014, Y2015)) %>% 
   select(Y2012:Y2015, Max)
 
-# df1 <- data.frame(ID=1:6, x=letters[1:6]) df2 <- data.frame(ID=7:12, x=letters[7:12]), row방향 합치기
-df1
-df2
+
+df1 <- data.frame(ID=1:6, x=letters[1:6])
+df2 <- data.frame(ID=7:12, x=letters[7:12])
+# 1. row방향 합치기
 bind_rows(df1, df2)
 
-# df1 <- data.frame(ID=1:6, x=letters[1:6]) df2 <- data.frame(ID=7:12, x=letters[7:12]), column방향 합치기
+# 2. column방향 합치기
 bind_cols(df1, df2)
+
 
 # mydata 에서 Index 별로, Y2012 column의 25%, 50%, 75%, 99% 에 해당하는 값을 구할것 
 mydata %>% 
   group_by(Index) %>% 
   summarise(percentile_25 = quantile(Y2012, prob = 0.25),
+            percentile_50 = quantile(Y2012, prob = 0.50),
+            percentile_75 = quantile(Y2012, prob = 0.75),
             percentile_99 = quantile(Y2012, prob = 0.99))
 
-# x3 <- data.frame(N=1:10) ,1부터 10까지의 데이터 x를 순서대로 5개의 index column을 추가할것
+
+x3 <- data.frame(N=1:10)
+# 1부터 10까지의 데이터 x3을 순서대로 5개의 index column을 추가할것
 x3 %>% 
   mutate(index = ntile(N, 5))
 
@@ -336,14 +358,16 @@ iris %>%
 
 # mydata data의 character형 데이터만 factor형 변수로 바꾼후, 그 변수의 level수를 표시하기.
 mydata %>% 
-  mutate_if(is.character, list(factor_var=as.factor)) %>% 
+  mutate_if(is.character, list(as.factor)) %>% 
   summarise_if(is.factor, list(n_level = nlevels))
 
 # numeric 변수에 1000을 곱하여 새로운변수 생성하기.
 mydata %>% 
   mutate_if(is.numeric, list(new_var=~.*1000))
 
-# k <- c("a", "b", "", "d") , ""를 NA로 변환하기
+
+k <- c("a", "b", "", "d")
+# ""를 NA로 변환하기
 k %>% 
   na_if("")
   
@@ -393,18 +417,18 @@ diamonds %>%
   ggplot(aes(x=carat, y=price)) +
   geom_point(aes(color=cut, size=table))
 
-# carat별 price를, group이 cut인 boxplot으로
+# carat별 price를, 색이 cut이고 group이 cut인 boxplot으로
 diamonds %>% 
-  ggplot(aes(x=carat, y=price)) +
-  geom_boxplot(aes(group=cut, color=cut))
+  ggplot(aes(x=carat, y=price)) + 
+  geom_boxplot(aes(color=cut, group=cut))
 
-# carat별 price를, 산점도로, cut별로 가로로 세분화.
+# carat별 price를, 산점도로, 색이 cut이고, cut별로 가로로 세분화.
 diamonds %>% 
   ggplot(aes(x=carat, y=price)) +
   geom_point(aes(color=cut)) +
   facet_grid(~cut)
 
-# carat별 price를, 산점도로, cut과 color로 가로로 세분화
+# carat별 price를, 산점도로, 색이 cut이고, cut과 color로 가로로 세분화
 diamonds %>% 
   ggplot(aes(x=carat, y=price)) +
   geom_point(aes(color=cut)) +
@@ -416,14 +440,9 @@ diamonds %>%
   geom_point() +
   facet_wrap(~cut)
 
-# cut별 carat을, y축이 평균값인 bar graph로.
+# cut별 carat을, 색이 cut이고, y축이 평균값인 bar graph로.
 diamonds %>% 
   ggplot(aes(x=cut, y=carat, fill=cut)) +
-  stat_summary_bin(fun = 'mean', geom = 'bar')
-
-# cut별 price를, y축이 평균값인 bar graph로.
-diamonds %>% 
-  ggplot(aes(x=cut, y=price, fill=cut)) +
   stat_summary_bin(fun = 'mean', geom = 'bar')
 
 # carat별 price를, color가 cut인 산점도로, x축은 0~3, y축은 0~20000
@@ -432,10 +451,10 @@ diamonds %>%
   geom_point(aes(color=cut)) +
   coord_cartesian(xlim = c(0, 3), ylim = c(0, 20000))
 
-# carat별 price를, group이 cut인 boxplot으로, 90도 돌려서표현.
+# carat별 price를, color가 cut이고 group이 cut인 boxplot으로, 90도 돌려서표현.
 diamonds %>% 
   ggplot(aes(x=carat, y=price)) +
-  geom_boxplot(aes(group=cut, color=cut)) +
+  geom_boxplot(aes(color=cut, group=cut)) +
   coord_flip()
 
 # carat별 price를, color가 cut인 산점도,배경은흰색,title은'carat과 price의 관계' x축은'carat'y축은'price',legend는 아래로,패널의grid는없애고,y축값에'$'와천원단위로','추가해서시각화.
@@ -443,11 +462,15 @@ diamonds %>%
   ggplot(aes(x=carat, y=price)) +
   geom_point(aes(color=cut)) +
   theme_bw() +
-  labs(title="carat과 price의 관계", x='carat', y='price') +
-  theme(legend.position = 'bottom') +
+  labs(title = 'carat과 price의 관계', x = 'carat', y = 'price') +
+  theme(legend.position = 'bottom',
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank()) +
   scale_y_continuous(
     labels = function(x) {
-      paste0('$', format(x, big.mark=','))
+      paste0('$', format(x, big.mark = ','))
     }
   )
 
@@ -466,11 +489,11 @@ iris %>%
   geom_density(alpha=.5)
   
 # cume_dist()를 이용, Y2002 column값 중 하위 0.1이하인 값들을 구하기.
+cume_dist(mydata$Y2002)
+
 mydata %>% 
   filter(cume_dist(Y2002) <= 0.1) %>% 
   select(Y2002)
-  
-cume_dist(mydata$Y2002)
 
 # percent_rank()를 이용, Y2002 column값 중 상위 0.1 이상인값들을 구하기.
 mydata %>% 
