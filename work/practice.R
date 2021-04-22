@@ -270,8 +270,7 @@ data <- c(1:10)
 data_sum <- data.frame(a=data, b=cumsum(data))
 data_sum
 
-data_sum %>% 
-  transmute(c = lag(b, 1, 0)) -> data_lag
+data_lag <- data_sum %>% transmute(c = lag(b, 1, 0)) 
 
 cbind(data_sum$b - data_lag$c)
 
@@ -368,8 +367,7 @@ mydata %>%
 
 k <- c("a", "b", "", "d")
 # ""를 NA로 변환하기
-k %>% 
-  na_if("")
+k %>% na_if("")
   
 # iris데이터의 Sepal.Length column data를 세가지 표현방법으로 나타내기.
 iris$Sepal.Length
