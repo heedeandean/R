@@ -1,7 +1,4 @@
-library(dplyr)
-library(ggplot2)
-library(tidyr)
-library(tibble)
+library(tidyverse)
 
 mydata <- read.csv('./data/sampledata.csv')
 mydata <- read.csv("https://raw.githubusercontent.com/deepanshu88/data/master/sampledata.csv", stringsAsFactors = FALSE)
