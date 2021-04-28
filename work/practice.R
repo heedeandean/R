@@ -6,8 +6,8 @@ library(tibble)
 mydata <- read.csv('./data/sampledata.csv')
 mydata <- read.csv("https://raw.githubusercontent.com/deepanshu88/data/master/sampledata.csv", stringsAsFactors = FALSE)
 
-glimpse(mydata)
-getwd()
+# glimpse(mydata)
+# getwd()
 
 x <- data.frame(ID=1:6, ID1=1:6)
 y <- data.frame(ID=6:7, ID1=6:7)
@@ -27,25 +27,19 @@ mydata2 <- data.frame(X1=sample(1:100, 100), X2=runif(100))
 
 # =============
 # 랜덤한 3개의 row 선택하여 출력
-mydata %>% 
-  sample_n(3)
+mydata %>% sample_n(3)
 
 # 0.1의 비율(10%)의 row 만 선택하여 출력
 nrow(mydata)
 
-mydata %>% 
-  sample_frac(0.1)
+mydata %>% sample_frac(0.1)
 
 # 중복되는 행 제거 
-mydata %>% 
-  distinct()
+mydata %>% distinct()
 
 # Index column을 기준으로 중복되는 row 제거하고 출력.(두가지버전)
-mydata %>% 
-  distinct(Index) 
-
-mydata %>% 
-  distinct(Index, .keep_all = TRUE)
+mydata %>% distinct(Index) 
+mydata %>% distinct(Index, .keep_all = TRUE)
 
 # Index와 Y2010 column을 기준으로 중복되는 row를 제거하고 출력
 mydata %>% 
@@ -91,8 +85,7 @@ mydata %>%
 mydata %>% select(everything())
 
 # "I" 문자를 포함하는 column명만 출력
-mydata %>% 
-  select(contains('I'))
+mydata %>% select(contains('I'))
 
 # "State" column을 가장 앞에 출력
 mydata %>% 
@@ -135,6 +128,10 @@ mydata %>%
   summarise_at(vars(Y2005, Y2006), 
                list(n=~n(), mean=~mean(.), median=~median(.)))
 
+mydata %>% 
+  summarise_at(vars(Y2005, Y2006), 
+               list(n=~n(), mean=mean, median=median))
+
 # Y2011, Y2012 column에 대한 mean, median 을 계산하되, NA 값이 있으면 제외할것.
 mydata %>% 
   summarise_at(vars(Y2011, Y2012), 
@@ -153,10 +150,10 @@ mydata2 %>%
 
 # 숫자인 값들만 평균과 중앙값을 구할것.
 mydata %>% 
-  mutate_if(is.numeric, list(mean=~mean(.), median=~median(.)))
+  summarise_if(is.numeric, list(mean=~mean(.), median=~median(.)))
 
 mydata %>% 
-  summarise_if(is.numeric, list(mean=~mean(.), median=~median(.)))
+  summarise_if(is.numeric, list(mean=mean, median=median))
 
 # 숫자인 값들만 평균을 구하는데 NA 값은 제외시키고 구할것.
 mydata %>% 
@@ -190,7 +187,7 @@ mydata %>%
   group_by(Index) %>% 
   do(head(., 2))
 
-# Index별로, Y2015 column 값중 세번째로 큰값을 구하라
+# Index별로, Y2015 column 값중 세번째로 작은값을 구하라
 mydata %>% 
   group_by(Index) %>% 
   filter(min_rank(Y2015) == 3) %>% 
@@ -264,15 +261,12 @@ mydata %>%
   mutate(Total = cumsum(Y2015)) %>% 
   select(Y2015, Total)
 
-#(data <- c(1:10)), data에 누적값 column을 생성하고, 다시 원래 column을 구하기.
+
 data <- c(1:10)
-
+# data에 누적값 column을 생성하고, 다시 원래 column을 구하기.
 data_sum <- data.frame(a=data, b=cumsum(data))
-data_sum
-
-data_lag <- data_sum %>% transmute(c = lag(b, 1, 0)) 
-
-cbind(data_sum$b - data_lag$c)
+data_lag <- data_sum %>% mutate(c=lag(b, 1, 0))
+cbind(data_lag$b - data_lag$c)
 
 # df1, df2 공통의  column으로 join (key는 ID column)
 df1
@@ -328,6 +322,7 @@ df1 <- data.frame(ID=1:6, x=letters[1:6])
 df2 <- data.frame(ID=7:12, x=letters[7:12])
 # 1. row방향 합치기
 bind_rows(df1, df2)
+rbind(df1, df2)
 
 # 2. column방향 합치기
 bind_cols(df1, df2)
@@ -344,8 +339,7 @@ mydata %>%
 
 x3 <- data.frame(N=1:10)
 # 1부터 10까지의 데이터 x3을 순서대로 5개의 index column을 추가할것
-x3 %>% 
-  mutate(index = ntile(N, 5))
+x3 %>% mutate(index = ntile(N, 5))
 
 # mydata, 숫자형 data의 column만 선택하기.
 mydata %>% 
@@ -362,7 +356,7 @@ mydata %>%
 
 # numeric 변수에 1000을 곱하여 새로운변수 생성하기.
 mydata %>% 
-  mutate_if(is.numeric, list(new_var=~.*1000))
+  mutate_if(is.numeric, list(new=~.*1000))
 
 
 k <- c("a", "b", "", "d")
