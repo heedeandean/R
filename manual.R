@@ -22,5 +22,7 @@
 # 변수명
 # 1. 문자로 시작
 # 2. 영문(소문자)
-
 # https://3months.tistory.com/386
+
+# R Markdown
+# Ctrl + Alt + i : code chunk
