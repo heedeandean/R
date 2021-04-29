@@ -26,3 +26,7 @@
 
 # R Markdown
 # Ctrl + Alt + i : code chunk
+
+# 개념
+# geom_col() : 요약표 기반
+# geom_bar() : 원자료 기반(빈도 막대 그래프 : y값 없음) 
