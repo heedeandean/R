@@ -184,6 +184,11 @@ mydata %>%
   group_by(Index) %>% 
   do(head(., 2))
 
+mydata %>% 
+  filter(Index %in% c('A', 'C', 'I')) %>% 
+  group_by(Index) %>% 
+  sample_n(2)
+
 # Index별로, Y2015 column 값중 세번째로 작은값을 구하라
 mydata %>% 
   group_by(Index) %>% 
@@ -301,7 +306,7 @@ if_else(df3 < 0, 'negative', 'positive', 'missing value')
 df <- data.frame(x=c(1, 5, 6, NA))
 # 5보다작으면 +1, 같거나크면+2, 둘다아니면0으로 column 추가
 df %>% 
-  mutate(new_var = if_else(x < 5, x+1, x+2, 0))
+  mutate(new_var = if_else(x<5, x+1, x+2, 0))
 
 mydf <- data.frame(x = c(1:5, NA))
 # 1은 one, 2는 two, 나머지 숫자는 other로 표시할것, na는 'missing'으로 표기
