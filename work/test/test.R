@@ -62,6 +62,9 @@ mydata %>%
 mydata %>% 
   select(-starts_with('Y'))
 
+mydata %>% 
+  select(!starts_with('Y'))
+
 # "x" 로 끝나는 column 만 출력
 mydata %>% 
   select(ends_with('x'))
@@ -178,7 +181,7 @@ mydata %>%
   summarise_at(vars(Y2011:Y2015),
                list(n=~n(), mean=~mean(., na.rm=TRUE)))
 
-# Index column에서 A, C 그리고 I 를 각각 2개씩만 뽑을것.
+# Index column에서 A, C 그리고 I 를 각각 2개씩만 뽑을것.(두가지 방법)
 mydata %>% 
   filter(Index %in% c('A', 'C', 'I')) %>% 
   group_by(Index) %>% 
@@ -328,6 +331,7 @@ rbind(df1, df2)
 
 # 2. column방향 합치기
 bind_cols(df1, df2)
+cbind(df1, df2)
 
 
 # mydata 에서 Index 별로, Y2012 column의 25%, 50%, 75%, 99% 에 해당하는 값을 구할것 
@@ -468,7 +472,9 @@ diamonds %>%
     }
   )
 
+
 # iris의 column값(Species제외)들의 분포를 histogram으로.
+library(tibble)
 iris %>% 
   rowid_to_column() %>% 
   pivot_longer(-c(Species, rowid), 
