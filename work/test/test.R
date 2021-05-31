@@ -142,7 +142,7 @@ mydata %>%
                list(mean=mean, median=median),
                na.rm=TRUE)
 
-# 원래 값(X1, X2)에서 평균을 빼고, 그 분산구하기)
+# 원래 값(X1, X2)에서 평균을 빼고, 그 분산구하기
 mydata2 <- data.frame(X1=sample(1:100, 100), X2=runif(100))
 
 mydata2 %>% 
