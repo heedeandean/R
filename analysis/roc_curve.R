@@ -84,23 +84,28 @@ rmse2(test$result, pred)
 
 
 # 5. ROC curve
-test %>% map_int(~sum(is.na(.x)))
-test.na <- test[is.na(test$result), 'id']
-test.na <- test.na %>% as.data.frame() %>% rename(id='.')
-test.na
-
-test <- anti_join(test, test.na, by='id')
-nrow(test)
-
-pred <- predict(model, test, type='response')
-
-df <- data.frame()
-for(i in pred) {
-  cm <- confusionMatrix(factor(ifelse(pred > i, 1, 0)), factor(test$result))
-  df <- rbind(df, data.frame(sensitivity=cm$byClass[1], specificity=cm$byClass[2]))
-}
-df
-
-df %>% 
-  ggplot(aes(x=1-specificity, y=sensitivity)) +
-  geom_line()
+# test %>% map_int(~sum(is.na(.x)))
+# test.na <- test[is.na(test$result), 'id']
+# test.na <- test.na %>% as.data.frame() %>% rename(id='.')
+# test.na
+# 
+# test <- anti_join(test, test.na, by='id')
+# nrow(test)
+# 
+# pred <- predict(model, test, type='response')
+# 
+# df <- data.frame()
+# for(i in pred) {
+#   cm <- confusionMatrix(factor(ifelse(pred > i, 1, 0)), factor(test$result))
+#   df <- rbind(df, data.frame(sensitivity=cm$byClass[1], specificity=cm$byClass[2]))
+# }
+# df
+# 
+# df %>% 
+#   ggplot(aes(x=1-specificity, y=sensitivity)) +
+#   geom_line()
+# 
+# library(pROC)
+# rocobj <- roc(test$result, test$p)
+# coords(rocobj, "best")
+# coords(rocobj, x="best", input="threshold", best.method="youden")
