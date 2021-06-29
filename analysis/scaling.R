@@ -15,14 +15,14 @@ iris_stand <- predict(scale_model, iris)
 iris_stand
 
 round(sapply(iris_stand[, -5], mean), 2) # 평균
-round(sapply(iris_stand[, -5], sd), 2) # 표준편차
+round(sapply(iris_stand[, -5], sd), 2)
 
 # 방법 2-2.
 iris_stand2 <- iris
 iris_stand2[, -5] <- scale(iris[, -5])
 
 round(sapply(iris_stand2[, -5], mean), 2) # 평균
-round(sapply(iris_stand2[, -5], sd), 2) # 표준편차
+round(sapply(iris_stand2[, -5], sd), 2)  
 
 # 방법 2-3. 직접 구현
 iris_stand3 <- iris
@@ -30,7 +30,7 @@ iris_stand3[, -5] <- sapply(iris[, -5],
                             function(x) {(x-mean(x))/sd(x)})
 
 round(sapply(iris_stand3[, -5], mean), 2) # 평균
-round(sapply(iris_stand3[, -5], sd), 2) # 표준편차
+round(sapply(iris_stand3[, -5], sd), 2) 
 
 
 # 2. 정규화 : 데이터 범위를 0~1로 변환
