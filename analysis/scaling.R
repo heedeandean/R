@@ -42,7 +42,7 @@ iris_range
 
 summary(iris_range) # Species를 제외하고 모두 min=0/max=1
 
-# 방법 2-2.
+# 방법 2-2. 직접 구현
 iris_range2 <- iris
 iris_range2[, -5] <- sapply(iris[, -5], 
                             function(x) {(x-min(x))/(max(x)-min(x))})
