@@ -3,6 +3,7 @@
 rm(list=ls())
 
 library(tidymodels)
+library(caret)
 
 setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data')
 
@@ -115,7 +116,6 @@ corrplot(data.cor, order = 'hclust')
 
 
 # 파생변수 선별 
-library(caret)
 high <- data.cor %>% findCorrelation(., cutoff = 0.7)
 high
 
@@ -219,7 +219,7 @@ rocobj <- roc(valid$Fault, logit.pred)
 aa <- coords(rocobj, x="best")
 # coords(rocobj, x="best", input="threshold", best.method="youden")
 cutoff <- aa$threshold
-cutoff # -2.360088
+cutoff # -2.019133 
 
 
 # test
@@ -227,9 +227,13 @@ logit.pred2 <- predict(logit.model, newdata=test)
 
 cm <- confusionMatrix(as.factor(ifelse(logit.pred2 > cutoff, 1, 0)), 
                       as.factor(test$Fault)) 
-cm$byClass[7]
+cm # No Information Rate 큰 이유는 목적변수(Fault)의 데이터 불균형 때문이다. 
+# => 해결 : library(Rose)
 
-plot.roc(test$Fault, logit.pred2, print.auc=TRUE, # AUC : 0.924
+cm$byClass[7]
+# Accuracy < F1, AUC 더 중요. Why? 목적변수가 불균형이면 Accuracy는 의미 X
+
+plot.roc(test$Fault, logit.pred2, print.auc=TRUE, # AUC : 0.928
          ci=FALSE, col="black", lty=2, print.thres=TRUE)
 
 
@@ -250,7 +254,7 @@ rocobj <- roc(valid$Fault, svm.pred)
 aa <- coords(rocobj, x="best")
 # coords(rocobj, x="best", input="threshold", best.method="youden")
 cutoff <- aa$threshold
-cutoff # 0.04464067
+cutoff # 0.03427405
 
 # test
 svm.pred2 <- predict(svm.model, newdata=test)
@@ -259,7 +263,7 @@ cm <- confusionMatrix(as.factor(ifelse(svm.pred2 > cutoff, 1, 0)),
                       as.factor(test$Fault)) 
 cm$byClass[7]
 
-plot.roc(test$Fault, svm.pred2, print.auc=TRUE, # AUC : 0.919
+plot.roc(test$Fault, svm.pred2, print.auc=TRUE, # AUC : 0.869
          ci=FALSE, col="black", lty=2, print.thres=TRUE)
 
 # ==============================
@@ -276,22 +280,23 @@ rocobj <- roc(valid$Fault, rf.pred)
 aa <- coords(rocobj, x="best")
 # coords(rocobj, x="best", input="threshold", best.method="youden")
 cutoff <- aa$threshold
-cutoff # 0.1416944
+cutoff # 0.1946111
 
 # test
 rf.pred2 <- predict(rf.model, newdata=test)
 
 cm <- confusionMatrix(as.factor(ifelse(rf.pred2 > cutoff, 1, 0)), 
                       as.factor(test$Fault)) 
-cm$byClass[7] # 0.9021407
+cm$byClass[7] # 0.9335303 
 
-plot.roc(test$Fault, rf.pred2, print.auc=TRUE, # AUC : 0.942
+plot.roc(test$Fault, rf.pred2, print.auc=TRUE, # AUC : 0.937
          ci=FALSE, col="black", lty=2, print.thres=TRUE)
 
 # ==============================
-## ctree # 여기부터 하믄댐
+## ctree 
 library(party)
 ctree.model <- ctree(Fault~., data=train)
+summary(ctree.model)
 
 # 최적의 cut off 찾기(valid 사용)
 ctree.pred <- predict(ctree.model, newdata=valid) 
@@ -300,7 +305,7 @@ rocobj <- roc(valid$Fault, ctree.pred)
 aa <- coords(rocobj, x="best")
 # coords(rocobj, x="best", input="threshold", best.method="youden")
 cutoff <- aa$threshold
-cutoff # 0.04464067
+cutoff # 0.1144201
 
 # test
 ctree.pred2 <- predict(ctree.model, newdata=test)
@@ -309,104 +314,58 @@ cm <- confusionMatrix(as.factor(ifelse(ctree.pred2 > cutoff, 1, 0)),
                       as.factor(test$Fault)) 
 cm$byClass[7]
 
-plot.roc(test$Fault, ctree.pred2, print.auc=TRUE, # AUC : 0.924
+plot.roc(test$Fault, ctree.pred2, print.auc=TRUE, # AUC : 0.823
          ci=FALSE, col="black", lty=2, print.thres=TRUE)
-
-#ddddddddddddddddddddd
-ctree.model <- ctree(Fault~., data=train)
-summary(ctree.model)
-
-ctree.pred <- predict(ctree.model, newdata=valid)
-rocobj <- roc(valid$Fault, ctree.pred)
-coords(rocobj, "best")
-aa <- coords(rocobj, x="best", input="threshold", best.method="youden")
-
-aa$threshold -> cutoff 
-
-# cutoff value 
-ctree.pred <- predict(ctree.model, newdata=test)
-cm <- confusionMatrix(as.factor(ifelse(ctree.pred > cutoff, 1, 0)),
-                      as.factor(test$Fault))
-cm$byClass[7]
-
-plot.roc(test$Fault, ctree.pred ,print.auc=TRUE,
-         ci=FALSE, col="black",lty=2,
-         print.thres=TRUE) # 0.808
 
 # ==============================
 # 2-4. 위에서 실시한 총 4개의 모형중에 가장 적합한 모형을 활용하여
 # 군집분석을 실시하고 F1 스코어값을 구하시오.
 # % 시각화와 통계량을 제시할 것.
 
-# 가장 적합한 모형은 AUC가 0.92로 가장 높은 랜덤포레스트.
+# 가장 적합한 모형은 AUC가 0.937로 가장 높은 랜덤포레스트.
 
-data.result.binary <- data.result %>% 
-  mutate(Fault = if_else(as.numeric(Fault) == 1, 1, 0)) 
+data.scale <- foo %>% 
+  select(-Fault) %>% 
+  mutate_all(~scale(.))
 
-data.result.binary %>% glimpse()
-
-data.scaled <- data.result.binary %>% select(-Fault)
-data.scaled <- data.frame(scale(data.scaled))
-head(data.scaled)
-
-contrasts(factor(data$SteelType))
-
-# 최적의 군집수 구하기.
-# install.packages('NbClust')
+# 최적의 군집수 구하기
 library(NbClust)
-set.seed(1234)
-nc <- NbClust(data.scaled, min.nc=2, max.nc=15, method="kmeans") # 에러
-?NbClust
-par(mfrow=c(1, 1))
-ls(nc)
-barplot(table(nc$Best.nc[1, ]))
+nc <- NbClust(data.scale, min.nc = 2, max.nc = 5, method = 'kmeans') # 2
 
-# 군집분석
-set.seed(1234)
-data.kmeans <- kmeans(data.scaled, centers = 2, nstart=25)
+kmean.model <- kmeans(data.scale, 2, nstart = 25)
+kmean.model
 
-names(data.kmeans)
-data.result.binary$cluster <- data.kmeans$cluster
-head(data.result.binary)
+data.cluster <- foo %>% 
+  mutate(cluster = as.numeric(kmean.model$cluster))
+glimpse(data.cluster)
 
-train_idx <- createDataPartition(data.result.binary$Fault, p=0.5)$Resample1
-data.train <- data.result.binary[train_idx, ]
+train_idx <- createDataPartition(data.cluster$Fault, p=0.5)$Resample1
+train <- data.cluster[train_idx, ]
+temp <- data.cluster[-train_idx, ]
+valid_idx <- createDataPartition(temp$Fault, p=0.6)$Resample1
+valid <- temp[valid_idx, ]
+test <- temp[-valid_idx, ]
+nrow(data) == nrow(train) + nrow(valid) + nrow(test)
 
-data.rest <- data.result.binary[-train_idx, ]
-valid_idx <- createDataPartition(data.rest$Fault, p=0.6)$Resample1
-data.valid <- data.rest[valid_idx, ]
-data.test <- data.rest[-valid_idx, ]
-
-# 랜덤포레스트
 set.seed(42)
-rf <- randomForest(Fault~., data = data.train, ntree=200, importance=T)
-# rf <- randomForest(factor(Fault)~., data = data.train.binary, ntree=200, importance=T)
-varImpPlot(rf, type=1, pch=19, col=1, cex=1, main='')
+rf.model <- randomForest(Fault~., data = train, ntree=300)
+summary(rf.model)
 
 # 최적의 cut off 찾기(valid 사용)
-pred.valid <- predict(rf, newdata = data.valid, type = 'response')
+rf.pred <- predict(rf.model, newdata=valid) 
 
-rocobj <- roc(data.valid$Fault, pred.valid)
-cutoff <- as.numeric(coords(rocobj, "best")[1])
-
-plot.roc(data.valid$Fault, pred.valid, print.auc=TRUE, # AUC : 0.898
-         ci=FALSE, col="black", lty=2, print.thres=TRUE)
+rocobj <- roc(valid$Fault, rf.pred)
+aa <- coords(rocobj, x="best")
+# coords(rocobj, x="best", input="threshold", best.method="youden")
+cutoff <- aa$threshold
+cutoff # 0.1865556 
 
 # test
-pred.test <- predict(rf, newdata = data.test, type = 'response')
-pred.test
+rf.pred2 <- predict(rf.model, newdata=test)
 
-rf.cm <- confusionMatrix(factor(if_else(pred.test > cutoff, 1, 0)), 
-                         factor(data.test$Fault)) 
-rf.cm # Accuracy : 0.7191
+cm <- confusionMatrix(as.factor(ifelse(rf.pred2 > cutoff, 1, 0)), 
+                      as.factor(test$Fault)) 
+cm$byClass[7] # 0.9542857  
 
-rf.cm$byClass[7] # 0.7850099
-
-
-
-
-
-
-
-
-
+plot.roc(test$Fault, rf.pred2, print.auc=TRUE, # AUC : 0.949
+         ci=FALSE, col="black", lty=2, print.thres=TRUE)
