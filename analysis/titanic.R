@@ -60,7 +60,8 @@ test <- data %>% filter(is_train == FALSE)
 # install.packages('caret')
 library(caret)
 
-# 지정 변수(Survived)에 따른 비율로 나눠줌
+# 목적변수(Survived)에 따른 비율로 나눠줌
+set.seed(1234)
 train_ind <- createDataPartition(train$Survived, p = 0.7)$Resample1 # 7(train):3(valid)
 
 data.train <- train[train_ind, ]
@@ -106,15 +107,13 @@ summary(model2)
 # install.packages('randomForest')
 library(randomForest)
 
-set.seed(42)
+set.seed(1234)
 rf <- randomForest(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
                    data = data.train, ntree=200, importance=T)
 
-varImpPlot(rf, type=1, pch=19, col=1, cex=1, main='')
+# varImpPlot(rf, type=1, pch=19, col=1, cex=1, main='')
 #====================================================
 # 6. validation
-data.valid$Survived # 정답
-
 pred1 <- predict(model1, newdata = data.valid, type = 'response')
 pred1
 
@@ -124,23 +123,108 @@ pred2
 pred3 <- predict(rf, newdata = data.valid)
 pred3
 
+# 최적의 cutoff 찾기
+library(pROC)
+
+rocobj <- roc(data.valid$Survived, pred1)
+aa <- coords(rocobj, x="best")
+cutoff1 <- aa$threshold
+cutoff1 # 0.4113541 
+
+rocobj <- roc(data.valid$Survived, pred2)
+aa <- coords(rocobj, x="best")
+cutoff2 <- aa$threshold
+cutoff2 # 0.3552705
+
+rocobj <- roc(data.valid$Survived, pred3)
+aa <- coords(rocobj, x="best")
+cutoff3 <- aa$threshold
+cutoff3 # 0.3619579
+
+
 # install.packages('e1071')
 # 혼동행렬(예측값, 정답)
-cm1 <- confusionMatrix(factor(if_else(pred1 > 0.5, 1, 0)), factor(data.valid$Survived))
-cm1 # No Information Rate : 찍음
+cm1 <- confusionMatrix(factor(if_else(pred1 > cutoff1, 1, 0)), factor(data.valid$Survived))
+cm1 # No Information Rate : 찍었을 때
 
-cm2 <- confusionMatrix(factor(if_else(pred2 > 0.5, 1, 0)), factor(data.valid$Survived)) 
+
+cm2 <- confusionMatrix(factor(if_else(pred2 > cutoff2, 1, 0)), factor(data.valid$Survived)) 
 cm2 
 
-cm3 <- confusionMatrix(factor(if_else(pred3 > 0.5, 1, 0)), factor(data.valid$Survived))
+cm3 <- confusionMatrix(factor(if_else(pred3 > cutoff3, 1, 0)), factor(data.valid$Survived))
 cm3  
 
-ls(cm1)
+#====================================================
+# 가장 좋은 모델은?
 
+# RMSE(Root Mean Squared Error, 평균 제곱근 오차) : 작을수록 좋다.
+RMSE(pred1, data.valid$Survived) # 0.3620276
+RMSE(pred2, data.valid$Survived) # 0.3575956
+RMSE(pred3, data.valid$Survived) # 0.349408
+
+# ls(cm1)
 # F1 높을수록 좋다. 
-cm1$byClass[7] 
-cm2$byClass[7]
-cm3$byClass[7]
+cm1$byClass[7] # 0.846395 
+cm2$byClass[7] # 0.8444444 
+cm3$byClass[7] # 0.863354 
+
+# AUC
+plot.roc(data.valid$Survived, pred1, print.auc=TRUE, # AUC : 0.879
+         ci=FALSE, col="black", lty=2, print.thres=TRUE)
+
+plot.roc(data.valid$Survived, pred2, print.auc=TRUE, # AUC : 0.878
+         ci=FALSE, col="black", lty=2, print.thres=TRUE)
+
+plot.roc(data.valid$Survived, pred3, print.auc=TRUE, # AUC : 0.882
+         ci=FALSE, col="black", lty=2, print.thres=TRUE)
+
+# => 랜덤 포레스트가 제일 좋은 성능을 낸다.
+#====================================================
+# 교차검증 
+set.seed(1234)
+
+rm(list = ls(pattern="cv_result_"))
+cv_list <- createFolds(train$Survived, k = 10)
+
+for(i in 1:length(cv_list)) {
+  valid_index <- cv_list[[i]]
+  
+  # K-fold 에서의 test 데이터
+  cv_valid_set <- train[valid_index,]
+  
+  # K-fold 에서의 train 데이터
+  cv_train_set <- train[-valid_index,]
+  
+  # 모델 생성
+  rf_m <- randomForest(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
+                       data = cv_train_set, ntree=200, importance=T)
+  
+  # predict 
+  rf_p <- predict(rf_m, newdata = cv_valid_set)
+  
+  rf_cm <- confusionMatrix(factor(if_else(rf_p > 0.5, 1, 0)), 
+                           factor(cv_valid_set$Survived))
+   
+  assign(paste0("cv_result_",i), rf_cm$byClass[7])
+}
+
+result_cv <- mget(ls(pattern="cv_result_")) 
+
+# F1이 가장 높은 인덱스
+foo <- result_cv %>% as.data.frame() %>% which.max() %>% as.data.frame() %>% rownames() 
+index_max <- as.integer(gsub('\\D','', foo))
+
+valid_index <- cv_list[[index_max]]
+cv_valid_set <- train[valid_index,]
+cv_train_set <- train[-valid_index,]
+rf_m <- randomForest(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
+                     data = cv_train_set, ntree=200, importance=T)
+rf_p <- predict(rf_m, newdata = cv_valid_set)
+
+rf_cm <- confusionMatrix(factor(if_else(rf_p > 0.5, 1, 0)), 
+                         factor(cv_valid_set$Survived))
+rf_cm$byClass[7]
+
 #====================================================
 # 7. output : test 데이터
 
@@ -150,10 +234,29 @@ sub
 data.result <- inner_join(test, sub, by='PassengerId')
 data.result
 
-data.result.pred <- predict(model1, newdata = data.result, type='response')
+# data.result.pred <- predict(model1, newdata = data.result, type='response')
 # data.result.pred <- predict(model2, newdata = data.result, type='response')
-# data.result.pred <- predict(rf, newdata = data.result)
+data.result.pred <- predict(rf, newdata = data.result)
+# data.result.pred <- predict(rf_m, newdata = data.result)
 
-confusionMatrix(factor(if_else(data.result.pred > 0.5, 1, 0)), 
-                factor(data.result$Survived.y))   
-#====================================================
+rocobj <- roc(data.result$Survived.y, data.result.pred)
+aa <- coords(rocobj, x="best")
+cutoff <- aa$threshold
+cutoff 
+
+cm <- confusionMatrix(factor(if_else(data.result.pred > cutoff, 1, 0)), 
+                      factor(data.result$Survived.y))   
+
+# 모델 성능 측정
+
+# RMSE
+RMSE(data.result.pred, data.result$Survived.y) 
+
+# F1
+cm$byClass[7] # 0.9655172 / 0.9525617 / 0.8471074 
+
+# AUC
+plot.roc(data.result$Survived.y, data.result.pred, print.auc=TRUE, # AUC : 0.989 / 0.976 / 0.919
+         ci=FALSE, col="black", lty=2, print.thres=TRUE)
+
+# => train엔 랜덤포레스트가 제일 좋았는데, test시 선형회귀가 제일 좋은 성능;;

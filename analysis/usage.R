@@ -1,5 +1,5 @@
 rm(list=ls())
-setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/weather/')
+setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/usage/')
 library(tidyverse)
 library(lubridate)
 
@@ -22,7 +22,7 @@ usage$datetime <- as_datetime(usage$timestamp)
 
 head(usage) # timestamp 15분 간격
 glimpse(usage) # 6,720 X 2
-View(usage)
+# View(usage)
 
 
 # 3) usage_history.tsv
@@ -44,7 +44,6 @@ weather <- weather %>% mutate_all(list(~na_if(., '')))
 weather %>% map_int(~sum(is.na(.x))) # 1안.
 colSums(is.na(weather)) # 2안.
 
-usage <- usage %>% mutate_all(list(~na_if(., '')))
 colSums(is.na(usage)) 
 
 usage.history <- usage.history %>% mutate_all(list(~na_if(., '')))
@@ -128,7 +127,7 @@ weather.usage <- inner_join(weather, usage.result, by = c('date'))
 weather.usage %>% head()
 
 library(corrplot)
-data.cor <- weahter.usage %>% select(-date, -amount) %>% cor()
+data.cor <- weather.usage %>% select(-date, -amount) %>% cor()
 corrplot(data.cor, order = 'hclust') 
 # 기온과 가장 밀접한 관계를 지닌 사용용도는 A로 확인.
 
