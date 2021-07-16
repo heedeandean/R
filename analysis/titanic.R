@@ -1,7 +1,4 @@
-# To Do!
-# 타이타닉 데이터로
-# [선형 회귀/로지스틱 회귀/랜덤포레스트]모델을 이용하여 
-# 목적변수(Survived:생존)를 예측
+# To Do! 목적변수(Survived:생존)를 예측 (with. 타이타닉 데이터)
 
 rm(list=ls()) # 메모리 삭제
 setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/titanic')
@@ -60,9 +57,9 @@ test <- data %>% filter(is_train == FALSE)
 # install.packages('caret')
 library(caret)
 
-# 목적변수(Survived)에 따른 비율로 나눠줌
+# 목적변수(Survived)에 따른 비율로 train(7)/valid(3) 분할
 set.seed(1234)
-train_ind <- createDataPartition(train$Survived, p = 0.7)$Resample1 # 7(train):3(valid)
+train_ind <- createDataPartition(train$Survived, p = 0.7)$Resample1 
 
 data.train <- train[train_ind, ]
 data.valid <- train[-train_ind, ]
@@ -78,7 +75,7 @@ train %>%
 #====================================================
 # 5. 모델링 : train 데이터
 
-# 설명변수 추출 : 범주가 넓거나 필요없는 변수는 쓰지 않는다.
+# 설명변수 추출 : 범주가 넓은 변수 사용 X
 glimpse(train)
 
 # model1. 선형 회귀
@@ -147,7 +144,6 @@ cutoff3 # 0.3619579
 cm1 <- confusionMatrix(factor(if_else(pred1 > cutoff1, 1, 0)), factor(data.valid$Survived))
 cm1 # No Information Rate : 찍었을 때
 
-
 cm2 <- confusionMatrix(factor(if_else(pred2 > cutoff2, 1, 0)), factor(data.valid$Survived)) 
 cm2 
 
@@ -180,83 +176,22 @@ plot.roc(data.valid$Survived, pred3, print.auc=TRUE, # AUC : 0.882
 
 # => 랜덤 포레스트가 제일 좋은 성능을 낸다.
 #====================================================
-# 교차검증 
-set.seed(1234)
-
-rm(list = ls(pattern="cv_result_"))
-cv_list <- createFolds(train$Survived, k = 10)
-
-for(i in 1:length(cv_list)) {
-  valid_index <- cv_list[[i]]
-  
-  # K-fold 에서의 test 데이터
-  cv_valid_set <- train[valid_index,]
-  
-  # K-fold 에서의 train 데이터
-  cv_train_set <- train[-valid_index,]
-  
-  # 모델 생성
-  rf_m <- randomForest(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
-                       data = cv_train_set, ntree=200, importance=T)
-  
-  # predict 
-  rf_p <- predict(rf_m, newdata = cv_valid_set)
-  
-  rf_cm <- confusionMatrix(factor(if_else(rf_p > 0.5, 1, 0)), 
-                           factor(cv_valid_set$Survived))
-   
-  assign(paste0("cv_result_",i), rf_cm$byClass[7])
-}
-
-result_cv <- mget(ls(pattern="cv_result_")) 
-
-# F1이 가장 높은 인덱스
-foo <- result_cv %>% as.data.frame() %>% which.max() %>% as.data.frame() %>% rownames() 
-index_max <- as.integer(gsub('\\D','', foo))
-
-valid_index <- cv_list[[index_max]]
-cv_valid_set <- train[valid_index,]
-cv_train_set <- train[-valid_index,]
-rf_m <- randomForest(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
-                     data = cv_train_set, ntree=200, importance=T)
-rf_p <- predict(rf_m, newdata = cv_valid_set)
-
-rf_cm <- confusionMatrix(factor(if_else(rf_p > 0.5, 1, 0)), 
-                         factor(cv_valid_set$Survived))
-rf_cm$byClass[7]
-
-#====================================================
 # 7. output : test 데이터
+data.result.pred <- predict(rf, newdata = test)
 
+result <- test %>% 
+  select(PassengerId) %>% 
+  cbind(Survived = if_else(data.result.pred > cutoff3, 1, 0))
+
+write.csv(result, './result.csv') # 결과 제출
+
+
+# 채점
 sub <- read.csv('gender_submission.csv') # 정답
 sub
 
-data.result <- inner_join(test, sub, by='PassengerId')
-data.result
+data.result <- left_join(sub, result, by='PassengerId')
+data.result %>% head()
 
-# data.result.pred <- predict(model1, newdata = data.result, type='response')
-# data.result.pred <- predict(model2, newdata = data.result, type='response')
-data.result.pred <- predict(rf, newdata = data.result)
-# data.result.pred <- predict(rf_m, newdata = data.result)
-
-rocobj <- roc(data.result$Survived.y, data.result.pred)
-aa <- coords(rocobj, x="best")
-cutoff <- aa$threshold
-cutoff 
-
-cm <- confusionMatrix(factor(if_else(data.result.pred > cutoff, 1, 0)), 
-                      factor(data.result$Survived.y))   
-
-# 모델 성능 측정
-
-# RMSE
-RMSE(data.result.pred, data.result$Survived.y) 
-
-# F1
-cm$byClass[7] # 0.9655172 / 0.9525617 / 0.8471074 
-
-# AUC
-plot.roc(data.result$Survived.y, data.result.pred, print.auc=TRUE, # AUC : 0.989 / 0.976 / 0.919
-         ci=FALSE, col="black", lty=2, print.thres=TRUE)
-
-# => train엔 랜덤포레스트가 제일 좋았는데, test시 선형회귀가 제일 좋은 성능;;
+RMSE(data.result$Survived.y, data.result$Survived.x) # 0.4402044 
+# 결과는 별로 안좋다ㅠㅠ 

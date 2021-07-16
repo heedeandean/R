@@ -4,25 +4,32 @@ library(tidyverse)
 library(lubridate)
 
 ## load data
+
 # 1) weather.csv
 # - dt : 날짜데이터
 # - avg_temp: 해당일의 평균온도
 weather <- read.csv('weather.csv', stringsAsFactors = F, strip.white = T)
 
+weather <- weather %>% as_tibble() # 10행만 보여줌
+weather
 glimpse(weather) # 70 X 2
-head(weather)
 
 
 # 2) usage.csv
 # - amount : 15분동안 사용된 사용전력
 usage <- read.csv('usage.csv', stringsAsFactors = F, strip.white = T)
 
-# 유닉스 시간 변환
-usage$datetime <- as_datetime(usage$timestamp)
-
-head(usage) # timestamp 15분 간격
+usage <- usage %>% as_tibble()
+usage 
 glimpse(usage) # 6,720 X 2
-# View(usage)
+
+# 유닉스 시간 변환
+usage <- usage %>% 
+  mutate(datetime = as_datetime(timestamp)) %>% # 1안
+  # mutate(datetime = as.POSIXct(timestamp, origin='1970-01-01')) %>% # 2안
+  select(-timestamp)
+
+usage # 15분 간격
 
 
 # 3) usage_history.tsv
@@ -30,9 +37,10 @@ glimpse(usage) # 6,720 X 2
 # - A~E : 건물에서 용도별 전력 사용량
 # - time : 날짜는 생략된 시간데이터
 
-usage.history <- read.table('usage_history.tsv', sep = '\t', 
-                            stringsAsFactors = F, strip.white = T,
-                            header = TRUE)
+usage.history <- read.csv('usage_history.tsv', sep = '\t', 
+                          stringsAsFactors = F, strip.white = T)
+
+usage_history <-
 
 
 glimpse(usage.history) # 201,600 X 7
