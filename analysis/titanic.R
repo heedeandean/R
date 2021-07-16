@@ -73,10 +73,12 @@ train %>%
   geom_density(alpha=0.5)
 
 #====================================================
-# 5. 모델링 : train 데이터
+# 5. 모델링 : train 데이터 사용
 
 # 설명변수 추출 : 범주가 넓은 변수 사용 X
-glimpse(train)
+glimpse(data.train)
+
+# 모델이 자동으로 chr -> 더미 변환(ex. Sex, Embarked)
 
 # model1. 선형 회귀
 lm.model <- lm(Survived~PassengerId+Pclass+Sex+Age+SibSp+Parch+Fare+Embarked,
