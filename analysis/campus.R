@@ -3,15 +3,15 @@
 # 변수설명
 # sl_no = Serial Number
 # gender = Male='M', Female='F'
-# ssc_p = 중등 교육 비율 - 10학년
+# ssc_p = 중등 교육 성적- 10학년
 # ssc_b = 교육위원회 - Central/ Others
-# hsc_p = 고등 교육 비율 - 12학년
+# hsc_p = 고등 교육 성적 - 12학년
 # hsc_b = 교육위원회 - Central/ Others
 # hsc_s = 고등 교육의 전문화
 # degree_p = 학위 백분율
 # degree_t = 졸업예정자(학위유형) - 학위 교육 분야
 # workex = 직장 경험
-# etest_p = 취업 테스트 비율(대학에서 실시)
+# etest_p = 취업 테스트 성적(대학에서 실시)
 # specialisation = 졸업 후(MBA) - 전문화
 # mba_p = MBA percentage
 # status = Placed/Not placed
@@ -20,7 +20,7 @@
 
 rm(list=ls())
 
-library(tidyverse)
+library(tidymodels)
 
 setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/campus/')
 
@@ -43,96 +43,49 @@ data %>%
   filter(!is.na(salary)) %>%
   count(status)
 
+
 # => status::Not Placed => salary NA
 
 data <- data %>% mutate(salary = if_else(is.na(salary), 0, as.numeric(salary)))
 
 colSums(is.na(data)) 
+
 # =====================================
-## 3. EDA
-foo <- data %>%  
-  mutate_if(is.character, list(as.factor)) %>% 
-  mutate_if(is.factor, list(as.numeric)) 
+## 3. 전처리
 
-glimpse(foo)
+data %>% distinct(X) %>% nrow() 
+identical(data$X, data$sl)
+# => X, sl_no 단순변수이므로 제거
 
-# 1) 상관분석
+glimpse(data) 
+
+
+# character -> 더미
+library(caret)
+
+data_recipe <- recipe(status~., data = data) %>% 
+  step_rm(X, sl_no) %>% 
+  step_dummy(all_predictors()) %>% 
+  step_YeoJohnson(all_predictors()) %>% 
+  prep()
+
+data_baked <- bake(data_recipe, data)
+glimpse(data_baked)
+
+
+# =====================================
+## 4. EDA
+
+# 1) 상관분석 -> cor.test? 
 library(corrplot)
 
-# 0.7 이상부터 높은 관계 
-corrplot(cor(foo), order = 'hclust', method = 'number') 
-
-bar <- cor(foo) %>% as.data.frame()
-
-# Q. 취직에 가장 영향을 미치는 factor는? (salary 제외)
-# A. ssc_p 
-bar %>% 
-  select(status) %>% 
-  arrange(desc(status)) %>% 
-  head()
-
-# Q. Percentage가 취직에 영향을 미치는가?
-bar %>% 
-  select(status)   
-
-# Q. 기업이 가장 많이 요구하는 specialisation 전공은?
-# A. Mkt&Fin
 data %>% 
-  ggplot(aes(x = specialisation)) +
-  geom_bar(aes(fill=status))
-
-# Q. 모든 통계 테스트를 진행할것?
-
-
-
-# 2) 전체 설명변수
-foo %>% 
-  rowid_to_column() %>% 
-  pivot_longer(-c(rowid, status)) %>% 
-  ggplot(aes(x=value, fill=name)) +
-  geom_histogram() +
-  facet_wrap(~name, scale = 'free') +
-  theme(legend.position = 'none')
-# => factor형으로 의심되는 변수 
-# (degree_t, gender, hsc_b, hsc_s, specialisation, ssc_b, workex)
-
-
-# 3) 목적변수와 설명변수와의 관계
-foo <- foo %>% mutate(status = as.factor(status)) # 목적변수만 factor형 변환
-
-foo %>% 
-  rowid_to_column() %>%
-  pivot_longer(-c(rowid, status)) %>% 
-  ggplot(aes(x=status, y=value)) +
-  geom_boxplot() +
-  facet_wrap(~name, scale = 'free_y')
-
-
+  select_if(is.numeric) %>% 
+  select(-salary) %>% 
+  cor() %>% 
+  corrplot(method = 'number') # 0.7 이상부터 높은 관계 
 
 # =====================================
-data_backup <- data
-# data <- data_backup
-
-## 4. 전처리
-data %>% distinct(X) %>% nrow() 
-data %>% distinct(sl_no) %>% nrow()
-# => X, sl_no 는 단순변수
-
-data <- data %>% select(-X, -sl_no)
-
-glimpse(data)
-
-# 위 그래프에서 facor형으로 의심된 변수들 
-data %>% 
-  select(degree_t, gender, hsc_b, hsc_s, specialisation, ssc_b, workex) %>% 
-  glimpse()
-# 모두 character형
-# => 로지스틱, 랜덤포레스트는 자동으로 더미로 바꿔준다. 
-# 궁금한점. 다른 모델들도 자동으로 더미로 바꿔줄까?
-
-# =====================================
-glimpse(data)
-
 ## 5. train(7)/valid(3) 분할
 library(caret)
 
@@ -147,6 +100,8 @@ table(train$status) %>% prop.table() %>% round(2)
 table(valid$status) %>% prop.table() %>% round(2)
 
 # =====================================
+# cf. 로지스틱, 랜덤포레스트는 자동으로 character -> 더미 변환.
+
 ## 6. 모델링
 
 ####### 랜덤포레스트
@@ -154,6 +109,7 @@ library(randomForest)
 
 set.seed(1234)
 rf <- randomForest(factor(status)~., data = train, ntree=200, importance=T)
+glimpse(train)
 
 pred1 <- predict(rf, newdata = valid)
 
@@ -177,7 +133,7 @@ fitControl <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
 set.seed(1234)
 rf_fit <- train(status~., data = train, method = "rf",
                 trControl = fitControl, verbose = F)
-rf_fit # mtree : 8 
+rf_fit # mtree : 9 
 
 rf.pred <- predict(rf_fit, newdata = valid) 
 
@@ -188,7 +144,7 @@ RMSE(as.numeric(rf.pred), as.numeric(as.factor(valid$status))) # 0
 set.seed(1234)
 rf_fit2 <- train(status~., data = data, method = "rf",
                  trControl = fitControl, verbose = F)
-rf_fit2 # mtree : 8
+rf_fit2 # mtree : 9
 
 # => 최종모델은 rf.fit2
 # =====================================
@@ -206,14 +162,6 @@ colSums(is.na(test))
 pred <- predict(rf_fit2, newdata = test)
 
 write.csv(pred, 'result_um.csv') # 결과 제출
-# =====================================
-# 정답 추측..
-correct <- test_raw %>% 
-  mutate(status = if_else(is.na(salary), 'Not Placed', 'Placed')) %>% 
-  select(X, status)
-
-# 채점
-RMSE(as.numeric(pred), as.numeric(as.factor(correct$status))) # 0 
 
 # ===========================================
 # (salary 제외)
@@ -225,6 +173,7 @@ data %>% head
 data <- data %>% 
   mutate(status = as.numeric(as.factor(status)))
 
+glimpse(data)
 
 ## train(7)/valid(3) 분할
 library(caret)
@@ -248,7 +197,7 @@ rf <- randomForest(factor(status)~., data = train, ntree=200, importance=T)
 pred1 <- predict(rf, newdata = valid)
 
 # RMSE(Root Mean Squared Error, 평균 제곱근 오차) : 작을수록 좋다.
-RMSE(as.numeric(pred1), valid$status) # 0.3692745
+RMSE(as.numeric(pred1), as.numeric(valid$status)) # 0.398862
 
 
 ## 앙상블(Stacking)을 하면 RMSE가 더 좋아질까? 
@@ -259,7 +208,7 @@ library(caretEnsemble)
 # detectCores() %>% registerDoParallel()
 
 control <- trainControl(method="boot", number=10, savePredictions=TRUE) 
-algorithmList <- c('rpart', 'glm', 'svmLinear','rf') #(의사 결정, 일반화 선형, 서포트 백터 머신 , 랜덤 포레스트)
+algorithmList <- c('rpart', 'glm', 'svmLinear','rf') # (의사 결정, 일반화 선형, 서포트 백터 머신 , 랜덤 포레스트)
 set.seed(1234)
 models <- caretList(status~., data=train, trControl=control, 
                     methodList=algorithmList)
