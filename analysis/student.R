@@ -19,13 +19,13 @@ library(tidymodels)
 # guardian - 학생의 보호자 ('mother', 'father', 'other')
 # traveltime - 집에서 학교까지 시간 (numeric: 1 - 1 hour)
 # studytime - 주간 공부 시간 (numeric: 1 - 10 hours)
-# failures - 과거 수업 실패 횟수 (numeric: n if 1<=n<3, else 4)
+# failures - 낙제 횟수 (numeric: n if 1<=n<3, else 4) 
 # schoolsup - 추가 교육 지원 (yes or no)
 # famsup -  가족 교육 지원 (yes or no)
 # paid - 추가 유료 수업 (수학 or 포르투갈어) (yes or no)
 # activities - 교과 외 활동 (yes or no)
 # nursery - 보육원에 다녔다 (yes or no)
-# higher - 고등 교육을 원하는지 (yes or no)
+# higher - 더 높은 레벨의 교육을 원하는지 (yes or no)
 # internet - 집에서 인터넷 접속 (yes or no)
 # romantic - 로맨틱한 관계 여부 (yes or no)
 # famrel - 가족간의 관계 (numeric: from 1 - very bad to 5 - excellent)
@@ -37,25 +37,78 @@ library(tidymodels)
 # absences - 결석 횟수 (numeric: from 0 to 93)
 # G3 - 최종 성적 (numeric: from 0 to 20) -> 목적변수
 
+# ===============================
 ## 1. load data
-data <- read.csv('train.csv', strip.white = T)
+data <- read.csv('train.csv', na.string = c('', ' ', NA))
 
 glimpse(data) # 294 X 31
 head(data)
+
+# install.packages('skimr')
+library(skimr)
+data %>% skim()
+
 data %>% count(G3)
 
+data %>% filter(duplicated(.)) # 중복 row 확인
 
+# ===============================
 ## 2. NA 
 colSums(is.na(data)) 
 
+# ===============================
 
-## 3. EDA
+# ★주의. factor -> numeric
+values <- c("초", "중", "고", "특") 
+dat <- data.frame(x = ordered(values, levels = values))
+recipe(~ x, data = dat) %>% 
+  step_dummy(x) %>% 
+  prep() %>% 
+  juice()
+# cf. 맥스쿤 데이터전처리
 
-# 상관관계
-library(corrplot)
+# ===============================
+## 3. EDA 
 
-foo <- data %>% select_if(is.numeric) %>% cor()
-corrplot(foo, order = 'hclust') 
+# ★★★★★
+# 1. numeric, numeric : geom_point, geom_smooth(method = 'lm') 
+# 2. factor, factor : geom_point, geom_count
+# 3. x=factor or chr, y=numeric : geom_boxplot
+
+glimpse(data)
+
+# 설명변수(numeric) vs 목적변수(numeric) 
+data %>% 
+  select_if(is.numeric) %>% 
+  rowid_to_column() %>% 
+  pivot_longer(-c(rowid, G3)) %>% 
+  ggplot(aes(x=value, y=G3)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  facet_wrap(~name, scale='free')
+# => 
+# * 음의 상관관계(age, failures, goout, traveltime)
+# failures(낙제 횟수)(-)가 많을수록, G3의 크기가 작아진다.
+# 즉, G3가 큰 것이 좋은 성적임을 유추할 수 있다.
+
+# * 양의 상관관계(Fedu, Medu) - 부모의 교육수준
+
+
+# 설명변수(factor) vs 목적변수(numeric) 
+data %>% 
+  select_if(is.character) %>% 
+  mutate(G3 = data$G3) %>% 
+  rowid_to_column() %>% 
+  pivot_longer(-c(rowid, G3)) %>% 
+  ggplot(aes(x=value, y=G3)) +
+  geom_boxplot() +
+  facet_wrap(~name, scale='free_x')
+# =>
+# address가 U(도시)인 경우, 
+# Fjob(아빠 직업)이 teacher인 경우
+# higher - 더 높은 레벨의 교육을 원하는 경우
+# 남자일 경우
+# => 성적이 올라감
 
 
 # 목적변수(G3)의 분포
@@ -73,23 +126,23 @@ data_age <- data %>% mutate(age = as.factor(age))
 data_age %>% 
   ggplot(aes(x=age, y=G3, fill=age)) +
   geom_boxplot() 
-# => 17,18세의 중앙값이 비슷해보인다. / 19세에 외도가 있어보인다. / 20살이 가장 높은 성적을 받은 것으로 보인다.
+# => 17,18세의 중앙값이 비슷해보인다. / 20살이 가장 높은 성적을 받은 것으로 보인다.
 
 
-# G3 vs 부모의 직업
+# 알코올 vs 나이
 data %>% 
-  ggplot(aes(x = Fjob, y = G3)) +
+  select(age, Dalc, Walc) %>% 
+  rowid_to_column() %>% 
+  pivot_longer(-c(rowid, age)) %>% 
+  ggplot(aes(x=age, y=value)) +
   geom_point() +
-  geom_smooth(method = 'lm', se = F)
-
-data %>% 
-  ggplot(aes(x = Mjob, y = G3)) +
-  geom_point() +
-  geom_smooth(method = 'lm', se = F)
-# => 부모의 직업에 따른 학생의 성취도에서 뚜렷한 차이를 볼 수 없습니다.
+  geom_count(mapping = aes(x=age, y=value, shape=name)) 
 
 
+# ===============================
 ## 4. train(7)/valid(3) 분할
+
+# 1안.
 library(caret)
 
 set.seed(1234)
@@ -99,8 +152,15 @@ train <- data[train_ind, ]
 valid <- data[-train_ind, ]
 
 
-## 5. 모델링
+# 2안.
+# set.seed(1234)
+# data_split <- initial_split(data, prop = 3/4, strata = G3)
+# train <- training(data_split)
+# valid <- testing(data_split)
 
+
+# ===============================
+## 5. 모델링
 # ===============================
 # 랜덤포레스트
 library(randomForest)
@@ -139,6 +199,8 @@ ridge_pred <- predict(ridge_mod, s = bestlam_ridge, newx = x_valid)
 ## SOM
 
 library(tidymodels)
+
+set.seed(1234)
 
 # chr -> 더미
 data_recipe <- recipe(G3~., data = data) %>% 
@@ -248,6 +310,7 @@ stack.gbm <- caretStack(models, method="gbm", metric="RMSE", trControl=stackCont
 # 최종모델은 stack.gbm 
 
 
+# 앙상블할때 파라미터 튜닝하기!
 # ============================================
 ## output
 test <- read.csv('test.csv', strip.white = T)
@@ -258,3 +321,19 @@ stack.pred <- predict(stack.gbm, newdata = test)
 result <- round(stack.pred)
 
 write.csv(result, 'result_um.csv')
+
+
+# =======================
+# 채점
+correct <- read.csv('StudentGrade_정답.csv')
+
+sh <- read.csv('lsh.csv')
+ws <- read.csv('StudentGrade_ws.csv')
+hj <- read.csv('result_um.csv')
+
+RMSE(sh$G3_pred, correct$G3) # 4.420922 
+RMSE(ws$G3, correct$G3) # 4.441627
+RMSE(hj$x, correct$G3) # 4.163728
+
+nrow(correct)
+nrow(data)
