@@ -1,5 +1,6 @@
 # TO DO! 목적변수(G3) 예측
 
+rm(list=ls())
 setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/student/')
 
 library(tidymodels)
@@ -72,7 +73,7 @@ recipe(~ x, data = dat) %>%
 
 # ★★★★★
 # 1. numeric, numeric : geom_point, geom_smooth(method = 'lm') 
-# 2. factor, factor : geom_point, geom_count
+# 2. factor, factor 
 # 3. x=factor or chr, y=numeric : geom_boxplot
 
 glimpse(data)

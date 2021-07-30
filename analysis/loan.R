@@ -1,3 +1,4 @@
+rm(list=ls())
 setwd('C:/Users/82102/OneDrive/바탕 화면/git/R/analysis/data/loan/')
 
 library(tidymodels)
@@ -109,7 +110,7 @@ glimpse(data)
 
 # ★★★★★
 # 1. numeric, numeric : geom_point, geom_smooth(method = 'lm') 
-# 2. factor, factor : geom_point, geom_count
+# 2. factor, factor 
 # 3. x=factor or chr, y=numeric : geom_boxplot
 
 # 설명변수(numeric) vs 목적변수(factor) 
@@ -121,30 +122,6 @@ data %>%
   ggplot(aes(x=value, y=loan_status)) +
   geom_boxplot() +
   facet_wrap(~name, scale='free_x') 
-
-
-# 설명변수(facor) vs 목적변수(factor)
-data %>% select_if(is.character) %>% colnames()
-
-data %>% 
-  select(Gender, loan_status) %>% 
-  rowid_to_column() %>% 
-  pivot_longer(-c(rowid, loan_status)) %>% 
-  ggplot(aes(x=loan_status, y=value)) +
-  geom_point() +
-  geom_count(mapping = aes(x=loan_status, y=value, shape=name)) 
-
-
-data %>% 
-  select(education, loan_status) %>% 
-  rowid_to_column() %>% 
-  pivot_longer(-c(rowid, loan_status)) %>% 
-  ggplot(aes(x=loan_status, y=value)) +
-  geom_point() +
-  geom_count(mapping = aes(x=loan_status, y=value, shape=name)) 
-
-# 목적변수의 비율이 너무 치중되어 있다..
-table(data$loan_status)
 
 # ============================================
 ## 4. train(7)/valid(3) 분할
@@ -167,35 +144,14 @@ rf <- randomForest(factor(loan_status)~., data = train, ntree=200, importance=T)
 rf.pred <- predict(rf, newdata = valid)
 
 rf.cm <- confusionMatrix(rf.pred, as.factor(valid$loan_status))
-rf.cm$byClass[7] # F1 : 1 
+rf.cm$byClass[7] # F1 : 0.96
 
 
-## 
-# foo <- data %>% select(-past_due_days, -paid_off_time)
-# 
-# set.seed(1234)
-# train_ind <- createDataPartition(foo$loan_status, p = 0.7)$Resample1 # initial_split 동일
-# 
-# train_foo <- foo[train_ind, ]
-# valid_foo <- foo[-train_ind, ]
-# 
-# set.seed(1234)
-# foo.rf <- randomForest(factor(loan_status)~., data = train_foo, ntree=200, importance=T)
-# 
-# foo.pred <- predict(foo.rf, newdata = valid_foo)
-# 
-# foo.cm <- confusionMatrix(foo.pred, as.factor(valid_foo$loan_status))
-# foo.cm$byClass[7] # F1 : 0.25 
+# factor, chr -> 더미 / -목적변수
+# step_dummy(all_nominal(), -all_outcomes()) 
 
+# collect_metrics()
 
-
-
-
-
-# ============================================
-# ============================================
-# ============================================
-# ============================================
 # ============================================
 ## output
 test <- read.csv('test.csv', na.string = c('', ' ', NA))
@@ -217,12 +173,6 @@ result <- predict(rf, newdata = test)
 write.csv(result, 'result_um.csv')
 
 
-
-# ============================================
-# ============================================
-# ============================================
-# ============================================
-# ============================================
 # ============================================
 # 채점
 # correct <- read.csv('correct.csv', na.string = c('', ' ', NA))
@@ -230,12 +180,23 @@ write.csv(result, 'result_um.csv')
 # result.cm <- confusionMatrix(result, as.factor(correct$loan_status))
 # result.cm$byClass[7] # F1 : 1 
 
-
-
-
 stack.pred <- predict(stack.gbm, newdata = test) 
 result <- round(stack.pred)
 
 write.csv(result, 'result_um.csv')
 
 
+# =======================
+# 채점
+correct <- read.csv('correct.csv')
+
+sh <- read.csv('lsh.csv')
+ws <- read.csv('loanpayment_ws.csv')
+hj <- read.csv('result_um.csv')
+
+RMSE(as.numeric(as.factor(sh$predict_loan_status)), 
+     as.numeric(as.factor(correct$loan_status))) # 0.2
+RMSE(as.numeric(as.factor(ws$loan_status)), 
+     as.numeric(as.factor(correct$loan_status))) # 0.2
+RMSE(as.numeric(as.factor(hj$x)), 
+     as.numeric(as.factor(correct$loan_status))) # 0
