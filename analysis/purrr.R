@@ -210,14 +210,60 @@ height %>%
   geom_line()
 # =================
 
+library(modelr)
 
+height_model2 <- function(x) {
+  df <- height %>% 
+    filter(Country==x & Sex=='Men')
+  
+  fit <- lm(`Mean height (cm)`~`Year of birth`, data=df)
+  
+  df %>% 
+    add_predictions(fit) %>% 
+    select(Country, `Year of birth`, `Mean height (cm)`, pred)
+}
+
+map_df(c('South Korea', 'North Korea'), height_model2) %>% 
+  map_chr(n_distinct)
+# => Country 2개 X Year of birth 101개 = 202개
+
+map_df(c('South Korea', 'North Korea'), height_model2) %>% 
+  # 실제 평균 키(직선)
+  ggplot(aes(x=`Year of birth` , y=`Mean height (cm)`, color=Country)) + 
+  geom_line(lwd=1.5) +
+  geom_point(aes(y=pred), alpha=.5) # 예측(점)
+
+# Japan추가
+map_df(c('South Korea', 'North Korea', 'Japan'), height_model2) %>% 
+  # 실제 평균 키(직선)
+  ggplot(aes(x=`Year of birth` , y=`Mean height (cm)`, color=Country)) + 
+  geom_line(lwd=1.5) +
+  geom_point(aes(y=pred), alpha=.5) # 예측(점)
 
 # ==========================================
+# R² 높다 -> 예측력이 높다. (주의. 목적변수가 제일 많이 늘었다는 뜻 X)
 # ==========================================
+
+height %>% 
+  group_by(Country, Sex) %>% 
+  summarise(height_min=min(`Mean height (cm)`),
+            height_max=max(`Mean height (cm)`),
+            diff=height_max-height_min) %>% 
+  arrange(-diff)
+# => 한국 여성의 평균 신장이 제일 크게 늘었다.
+
+height %>% 
+  group_by(Country, Sex) %>% 
+  filter(`Year of birth` %in% c(1896, 1996)) %>% 
+  select(Country, Sex, `Year of birth`, `Mean height (cm)`) %>% 
+  pivot_wider(names_from = `Year of birth`, 
+              values_from = `Mean height (cm)`) %>%
+  mutate(diff=`1996`-`1896`) %>% 
+  arrange(-diff)
+
 # ==========================================
-# ==========================================
-
-
-
-
-
+# map_() : return list
+# map_dbl() : return double vector 
+# map_lgl() : return bool(논리) vector
+# map_int() : return int(정수) vector
+# map_chr() : return chr(문자) vector
