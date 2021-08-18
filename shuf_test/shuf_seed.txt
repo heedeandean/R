@@ -1,0 +1,93 @@
+# 랜덤한 3개의 row 선택하여 출력
+# 0.1의 비율(10%)의 row 만 선택하여 출력
+# 중복되는 행 제거 
+# Index column을 기준으로 중복되는 row 제거하고 출력.(두가지버전)
+# Index와 Y2010 column을 기준으로 중복되는 row를 제거하고 출력
+# Index와 State~Y2008 까지 선택.
+# Index와 State column제거하고 출력
+# Index와 State~Y2008 column을 제거하고 출력.
+# "Y"로 시작하는 Column만 출력
+# "Y"로 시작하는 Column만 제거하고 출력
+# "x" 로 끝나는 column 만 출력
+# "00" 을 포함하는 column만 출력
+# "Y2003" 부터 "Y2008" 까지의 column만 출력
+# "Y2001", "Y2002", "X2010" 셋중하나라도 해당하는 column 출력
+# 모든 column 을 출력
+# "I" 문자를 포함하는 column 만 출력
+# "State" column을 가장 앞에 출력
+# "Index" column을 "Index1"으로 변경해서 출력
+# Index column의 값이 "A" 인 것들만 출력
+# Index가 'A' or 'C' 인 row 만 추려냄.
+# Index가 'A' or 'C' 이며,  Y2002 column이 1300000보다 큰 row만 출력
+# Index가 'A' or 'C' 이거나, Y2002 column이 1300000보다 큰 row만 출력
+# Index가 'A' or 'C' 인 row들만 출력
+# Index가 "A" 도 아니고 "C"도 아닌 row들만 출력
+# State column의 값이 "Ar"을 포함하고 있는 row 만 출력
+# Y2015 column의 평균과 중앙값.
+# Y2005, Y2006 column에 대한 개수, mean, median 을 계산하여라.
+# Y2011, Y2012 column에 대한 mean, median 을 계산하되, NA 값이 있으면 제외할것.
+# 원래 값에서 평균을 빼고, 그 분산구하기 mydata2 <- data.frame(X1=sample(1:100, 100), X2=runif(100))
+# 숫자인 값들만 평균과 중앙값을 구할것.
+# 숫자인 값들만 평균을 구하는데 NA 값은 제외시키고 구할것.
+# Species별로, mean, med, sd 를 각각 적용한 변수를 생성
+# Index와 그리고 Y2011 column으로 sorting
+# Index는 내림차순으로 Y2012는 올림차순으로 sorting.
+# Index 별로, Y2011~Y2015까지의 column을 각각 개수(n())와 평균(mean(., na.rm=TRUE))을 구할것.
+# Index column에서 A, C 그리고 I 를 각각 2개씩만 뽑을것.
+# Index별로, Y2015 column 값중 세번째로 큰값을 구하라
+# min_rank() 를 이용, Index별로 Y2015 column값중 2번째로 작은 값을 구하기.
+# x <- c(1, 1, 1, 5, 5, 9, 7) : 결과가 1 2 3 4 5 7 6이 나오도록
+# x <- c(1, 1, 1, 5, 5, 9, 7) : 결과가 1 1 1 4 4 7 6이 나오도록
+# x <- c(1, 1, 1, 5, 5, 9, 7) : 결과가 1 1 1 2 2 4 3이 나오도록
+# Index 별 데이터를, Y2014와 Y2015에 대한 평균을 NULL을 제외하고 구한 후, # Y2015에 대한 평균의 결과를 내림차순으로 정렬해서 출력하기.
+# Y2015 column 값을 Y2014 column 값으로 나누어 기존변수에 change column으로 추가할것.
+# Y2015 column 값을 Y2014 column 값으로 나누어 change column만으로 표현
+# 모든 변수 값에 1000을 곱하여 새로운 (new_변수명)변수로 생성할것.
+# 모든 변수 값에 1000을 곱하여 기존변수에 넣기.
+# Y2008~Y2010 변수값들의 순위를 계산해서 새로운변수로 추가한다.
+# Y2008~Y2010 변수값들의 내림차순 순위를 계산해서 새로운변수로 추가한다.
+# Index별, Y2015년도에 가장높은 값을 가진 State를 출력하기.
+# State column의 첫글자를 이용해 Index2 column을 생성하기
+# Index별로 Y2015의 값을 누적해서 Total column명으로 출력하기.
+#(data <- c(1:10)), data에 누적값 column을 생성하고, 다시 원래 column을 구하기.
+# df1, df2 공통의  column으로 join (key는 ID column)
+# df1, df2 에서 df1을 기준으로 join (key는 ID column)
+# mtcars$model <- rownames(mtcars), first <- mtcars[1:20, ] second <- mtcars[10:32, ], row방향으로 같은 데이터만.
+# x <- data.frame(ID=1:6, ID1=1:6) y <- data.frame(ID=6:7, ID1=6:7), row방향으로 합치기(겹치는데이터한번만출력)
+# x <- data.frame(ID=1:6, ID1=1:6) y <- data.frame(ID=6:7, ID1=6:7), row방향으로 합치기(겹치는데이터도모두출력)
+# mtcars$model <- rownames(mtcars), first <- mtcars[1:20, ] second <- mtcars[10:32, ], row방향으로 first에서second빼기
+# df3 <- c(-10, 2, NA) # 음수는 negative, 양수는 positive, NA 는 missing value로 표시할것
+# df <- data.frame(x=c(1, 5, 6, NA)), 5보다작으면 +1, 같거나크면+2, 둘다아니면0으로 column 추가
+# mydf <- data.frame(x = c(1:5, NA)), 1은 one, 2는 two, 나머지 숫자는 other로 표시할것, na는 'missing'으로 표기
+# Y2012~Y2015 중 가장 큰값들로 구성되어있는 Max라는 새로운 column을 표시할것
+# df1 <- data.frame(ID=1:6, x=letters[1:6]) df2 <- data.frame(ID=7:12, x=letters[7:12]), row방향 합치기
+# df1 <- data.frame(ID=1:6, x=letters[1:6]) df2 <- data.frame(ID=7:12, x=letters[7:12]), column방향 합치기
+# mydata 에서 Index 별로, Y2012 column의 25%, 50%, 75%, 99% 에 해당하는 값을 구할것 
+# x3 <- data.frame(N=1:10) ,1부터 10까지의 데이터 x를 순서대로 5개의 index column을 추가할것
+# mydata, 숫자형 data의 column만 선택하기.
+# iris data에서 factor형 data의 column만 선택하기.
+# mydata data의 character형 데이터만 factor형 변수로 바꾼후, 그 변수의 level수를 표시하기.
+# numeric 변수에 1000을 곱하여 새로운변수 생성하기.
+# k <- c("a", "b", "", "d") , ""를 NA로 변환하기
+# iris데이터의 Sepal.Length column data를 세가지 표현방법으로 나타내기.
+# Sepal.Length가 5.5보다 큰 Species column만 출력하기.
+# iris data의 Species column 의 값이 "setosa" 인 data만 출력하도록
+# Index 별로, Y2015 변수의 가장 큰 값 순서(rank)를 구한후, Index와 rank 순으로 정렬하기
+# carat별 price를 산점도로.
+# carat 별 price를, bar graph로
+# carat 별 count를, bar graph로.
+# carat별 price를, 색이 cut인 산점도로.
+# carat별 price를, 색이 cut이고 size가 table인 산점도로.
+# carat별 price를, group이 cut인 boxplot으로
+# carat별 price를, 산점도로, cut별로 가로로 세분화.
+# carat별 price를, 산점도로, cut과 color로 가로로 세분화
+# carat별 price를, 산점도로, cut별로 가로세로 세분화
+# cut별 carat을, y축이 평균값인 bar graph로.
+# cut별 price를, y축이 평균값인 bar graph로.
+# carat별 price를, color가 cut인 산점도로, x축은 0~3, y축은 0~20000
+# carat별 price를, group이 cut인 boxplot으로, 90도 돌려서표현.
+# carat별 price를, color가 cut인 산점도,배경은흰색,title은'carat과 price의 관계 x축은'carat'y축은'price',legend는 아래로,패널의grid는없애고,y축값에'$'와천원단위로','추가해서시각화.
+# iris의 column값(Species제외)들의 분포를 histogram으로.
+# iris의 Sepal.Length의 밀도 그래프 그리기. Species별로 구분.
+# cume_dist()를 이용, Y2002 column값 중 하위 0.1이하인 값들을 구하기.
+# percent_rank()를 이용, Y2002 column값 중 상위 0.1 이상인값들을 구하기.

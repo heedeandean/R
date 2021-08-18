@@ -1,0 +1,44 @@
+# a <- c(1, 22, 333, 4444, 55555), 각 vector의 길이구하기
+# b <- c('abc', 'de', 'zzd') 'z'를 각 vector의 뒤에 붙이기
+# aa <- c(5,4,3,2,1); bb <- c(1,2,3,4,5), aa,bb각 벡터들을 더하기
+# aa <- c(5,4,3,2,1); bb <- c(1,2,3,4,5), aa,bb각 벡터들을 더한 후 벡터로
+# aa <- c(5,4,3,2,1); bb <- c(1,2,3,4,5), aa,bb각 벡터들을 더한 후 2를 곱할것
+# aa <- c(5,4,3,2,1); bb <- c(1,2,3,4,5); cc <- c(3) aa,bb각 벡터들을 더한 후 cc를 곱해줄것
+# mydata의 숫자형 column들의 sum을 구할것
+# mydata의 숫자형 column들의 값을 1000으로 나누기
+# mydata의 숫자형 column들의 값을 1000으로 나누어 원래 자료형 그대로 출력
+# mtcars 변수들의 평균을 NA제외하고 구하기
+# mtcars 변수들의 mean, median, sd를 구하기
+# lr <- list( list(a = 1, b = "A"), list(a = 3, b = "D", c=c(1, 2))) 각 list의 a 집합만 선택하기
+# lr <- list( list(a = 1, b = "A"), list(a = 3, b = "D", c=c(1, 2))) 각 두번째 집합만 선택하기
+# lr <- list( list(a = 1, b = "A"), list(a = 3, b = "D", c=c(1, 2))) 세번째 집합 선택
+# lr <- list( list(a = 1, b = "A"), list(a = 3, b = "D", c=c(1, 2))) 세번째 집합 선택 (값이 없는 경우 NA로 채울것)
+# 1~ 10, 3을 곱하여 벡터로 리턴
+# 1~ 10, 3을 곱하여 벡터로 리스트로 리턴
+# mtcars column값들이 character인지 벡터로 리턴
+# mtcars column들의 unique한 값들의 개수
+# 1~10, 각 값들의 쌍으로 구성된 값/mea들을 리턴
+# 5개의 난수 값을 3개 만들것
+# c <- c(1, 1, 1, 1, 1), 각 vector에 같은 난수를 더할것
+# c <- c(1, 1, 1, 1, 1), 각 vector에 다른 난수를 더할것
+# mtcars의 cyl별로, wt에 따른 mpg의 선형관계의 wt계수를 구하기
+# mtcars의 cyl 별로, wt에 따른 mpg 선형회귀 결과 중, p.value가 0.05인 wt변수들의 계수와 p.value를 구하기
+# df <- data.frame( x = 1:3,  y = 6:4 ), 각 column에 2를 곱하여 data.frame으로 리턴
+# b <- c('abc', 'de', 'zzd') 의 각 벡터에 'string'문자를 추가해서 라인별로 프린트
+# The first value of Sepal.Length is 5.1(첫번째 value임)를 출력하기
+# a <- c(1, 22, 333, 4444, 55555) 각 벡터에 aa <- c(5,4,3,2,1) 벡터값을 weight로 가중평균을 구하기 (NA제거) - 두가지 방법
+# x의 평균을 각 비율로 절사평균 구하기 trims <- c(0, 0.1, 0.2, 0.5) x <- rcauchy(1000)
+# 난수를 1개, 0~1로, 2개 10~100, 3개 100~1000 조건으로 생성할것
+# k <- map(1:4, ~ sample(1:10, 15, replace=T)), k의 각 list에서 모두 나타나는 값을 찾기.
+# k <- map(1:4, ~ sample(1:10, 15, replace=T)), k의 각 list에서 적어도 한번 나타나는 값을 찾기.
+# 1~10 값을 순서대로 더한값을 구하기
+# df2 <- data.frame(x=1:3, y=c("a", "b", "c"), stringsAsFactors = T) df2에서 factor인 값들을 리턴
+# df2 <- data.frame(x=1:3, y=c("a", "b", "c"), stringsAsFactors = T) df2에서 factor인 위치를 리턴
+# df2 <- data.frame(x=1:3, y=c("a", "b", "c"), stringsAsFactors = T) df2에서 factor인 값을 입력타입으로 리턴
+# df2 <- data.frame(x=1:3, y=c("a", "b", "c"), stringsAsFactors = T) df2에서 factor가 아닌 값을 입력타입으로 리턴
+# df3 <- data.frame( num1 = c(0, 10, 20), num2 = c(5, 6, 7), chr1 = c('a', 'b', 'c'), stringsAsFactors = FALSE ), df3에서 숫자만 평균을 구하고 나머지는 그대로 리턴
+# df3 <- data.frame( num1 = c(0, 10, 20), num2 = c(5, 6, 7), chr1 = c('a', 'b', 'c'), stringsAsFactors = FALSE ), df3에서 숫자만 평균을 구해서 입력데이터의 형태를 유지하여 리턴(나머지는 그대로)
+# df3 <- data.frame( num1 = c(0, 10, 20), num2 = c(5, 6, 7), chr1 = c('a', 'b', 'c'), stringsAsFactors = FALSE ), df3에서 숫자만 평균을 구할것(나머지는 생략)
+# mt <- matrix(1:20, nrow=5), row 방향 평균
+# mt <- matrix(1:20, nrow=5), column 방향 평균
+# mt <- matrix(1:20, nrow=5), mt의 역행렬 구하기 - 두가지 방법

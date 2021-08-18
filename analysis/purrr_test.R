@@ -108,6 +108,7 @@ map(1:10, ~.x*3)
 mtcars %>% map_lgl(is.character)
 
 # mtcars column들의 unique한 값들의 개수
+map_dbl(mtcars, ~length(unique(.x)))
 mtcars %>% map_int(~length(unique(.x)))
 
 # 1~10, 각 값들의 쌍으로 구성된 값/mea들을 리턴
