@@ -19,7 +19,7 @@ sink('iris.txt') # 저장할 파일명 지정
 summary(iris)
 sink() # 끝
 
-write.csv(dat, 'dat.csv')
+write.csv(dat, 'dat.csv') # default: quote=T 
 write.table(dat, 'dat.txt') # 탭 구분
 write.table(dat, 'dat2.txt', sep=',') 
 
