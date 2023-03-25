@@ -9,6 +9,7 @@ dat
 
 w1 <- scan() # 자료 입력, 마지막 엔터 두번
 w1
+w1 <- scan(sep=',') 
 
 #dat3 <- data.frame()
 #dat3 = edit(dat3)
