@@ -36,8 +36,8 @@ setequal(x,y) # 집합x,y가 같은지 여부
 setequal(x,c(1,5,2)) 
 5 %in% x # 원소가 집합 x에 속하는지 여부
 choose(5,2) # 5개의 원소를 가진 집합에서 2개의 원소를 추출하여 만들 수 있는 부분집합의 수
-
 #####################
+# 기본, 내장 함수
 pi
 options(digits = 20)
 pi
@@ -55,11 +55,13 @@ y <- c(2,4,-6,7)
 pmin(x,y)
 pmax(x,y)
 #####################
+# 제어문
+## 1. 조건문(ifelse, switch)
 x <- c(1,2,3,4)
 y <- c(2,1,4,5)
 ifelse(x<y, x, y) # = pmin
-#####################
-# 반복문
+
+## 2. 반복문(for, while, repeat)
 for(i in 1:5) print(rep(i,i))
 
 i <- 1
@@ -104,4 +106,7 @@ while(i <= 10) {
   x <- x+i
   i <- i+2
 }
+
+## 3. 분기문(break, next)
+## next : break보다 더 강제적. next 이후의 명령은 미수행
 x
