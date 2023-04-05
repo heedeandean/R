@@ -106,7 +106,7 @@ while(i <= 10) {
   x <- x+i
   i <- i+2
 }
+x
 
 ## 3. 분기문(break, next)
 ## next : break보다 더 강제적. next 이후의 명령은 미수행
-x
