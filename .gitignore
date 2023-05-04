@@ -46,3 +46,5 @@ rsconnect
 .httr-oauth
 twitter.R
 .Rproj.user
+
+.DS_Store
