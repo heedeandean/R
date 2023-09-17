@@ -211,3 +211,57 @@ merge(test1, test4)
 # 저장 시 변수명 차이 존재
 write.table(test1, 'test1.txt') 
 write.csv(test1, 'test1.csv') 
+
+#####################################
+# cf. 인덱스 시작: R(1부터~)/Python(0부터~)
+
+# 1. vector: 1차원
+# cf. 자료형 우선순위: 문자형 > 숫자형 > 논리형(F->0/T->1)
+xv <- c(1, 2)
+is.vector(xv)
+xv[c(1,2)]
+length(xv) # 원소 개수
+
+xv <- seq(1, 11, by=2)
+xv
+# 원소 삭제
+xv[-3]
+xv[-c(1,3,4)]
+
+# 2. 행렬(matrix) = data frame: 2차원
+xm <- matrix(data = 1:9, nrow = 3, byrow = T, dimnames = list(c('r1', 'r2', 'r3'), c('col1', 'col2', 'col3')))
+xm
+xm[1,2]
+xm[1,]
+xm[1, 2:3]
+length(xm)
+dim(xm) # 차원(행/열 개수) / 결과 vector
+
+xm <- matrix(1:8, nrow=2, byrow=T)
+xm
+y1 <- c(9:12)
+xm2 <- rbind(xm, y1)
+xm2
+
+y2 <- c(10, 20, 30)
+xm3 <- cbind(y2, xm2)
+xm3
+xm2[-2,]
+xm2[,-c(1,3)]
+
+mx1 <- matrix(1:6, ncol=3, byrow=T)
+mx2 <- cbind(rep(1,3), rep(2,3))
+mx1 %*% mx2 # 행렬 곱
+
+# 3. 배열(array): 3차원 이상
+# vector, 행렬: 원소들은 모두 같은 형(mode)
+
+# 4. data frame 
+x <- seq(1, 10, by=2)
+x
+y <- letters[1:length(x)]
+y
+df <- data.frame(id=x, name=y)
+df
+
+df$id
