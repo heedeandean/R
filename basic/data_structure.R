@@ -65,7 +65,8 @@ character(3)
 matr <- matrix(1:9, nrow=3) # 3 x 3
 matr
 length(matr) # 원소 개수
-mode(matr) # 자료형
+mode(matr) # 원소의 자료형
+class(matr) # 데이터 구조
 dim(matr) # 행 열
 
 c1 <- c(1:3)
@@ -117,7 +118,7 @@ arr
 dimnames(arr) <- list(paste('row', c(1:3)), paste('col', c(1:3)), paste('ar', c(1:2)))
 arr
 length(arr) # 자료 개수
-mode(arr) # 자료형
+mode(arr) # 원소의 자료형
 dim(arr) # 각 차원 벡터 크기
 dimnames(arr)
 
@@ -145,7 +146,7 @@ ary1[1,1,]
 ary1[1,,-2]
 
 
-# 4. 리스트 : 원소가 여러 자료형을 가질 수 있음. (cf. 행렬, 배열 - 단일 자료형)
+# 4. 리스트 : 원소가 여러 자료형을 가질 수 있음. (cf. 벡터, 행렬, 배열 - 단일 자료형)
 a <- 1:10
 b <- 11:15
 klist <- list(vec1=a, vec2=b, descrip='ex')
