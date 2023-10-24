@@ -54,3 +54,47 @@ summarize(gm, n=n(), mean_of_mpg=mean(mpg))
 # pipe 연산자
 mtcars1$mpg %>% mean
 mtcars1$mpg %>% sample(5) # 랜덤 추출
+
+#
+x <- 3
+tibble(x=1:2, x*x, '$'=x^3, !!x) # !!: 외부 변수
+tibble(letters[1:2])
+tibble(a=1:2, b=diag(2), c=cov(iris[1:2]))
+
+mtcars %>% head
+mtcars %>% as_tibble
+mtcars %>% as_tibble %>% as.data.frame
+
+mtcars %>% 
+  filter(am==0) %>% 
+  group_by(carb) %>% 
+  summarize(mean(mpg))
+
+mtcars %>% 
+  filter(gear!=5) %>% 
+  group_by(gear) %>% 
+  summarize(
+    Avg_mpg = mean(mpg),
+    Median_hp = as.numeric(median(hp)),
+    Count = n()
+  ) %>% 
+  arrange(desc(Count))
+
+install.packages('nycflights13')
+library(nycflights13)
+ls('package:nycflights13')
+flights %>% dim
+not_cancelled <- flights %>% filter(!is.na(dep_delay), !is.na(arr_delay))
+not_cancelled %>% dim
+not_cancelled %>% head(3) %>% .[,1:6]
+
+not_cancelled %>% 
+  group_by(year, month, day) %>% 
+  mutate(r=min_rank(desc(dep_time))) %>% 
+  filter(r %in% range(r)) %>% 
+  .[,1:6]
+
+not_cancelled %>% 
+  group_by(dest) %>% 
+  summarise(carriers = n_distinct(carrier)) %>% 
+  arrange(desc(carriers))
