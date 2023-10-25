@@ -1,5 +1,5 @@
-install.packages('tidyverse')
-library(tidyverse)
+install.packages('tidyverse') # lib='저장 경로 위치'
+library(tidyverse) # lib.loc='저장 경로 위치'
 
 # tibble: 개선된 데이터 프레임
 tb1 <- tibble(x=1:3, y=x+2, z=3)
@@ -21,6 +21,7 @@ as_tibble(cars)
 
 ?mtcars
 head(mtcars)
+data(mtcars)
 mtcars1 <- rownames_to_column(mtcars)
 mtcars1
 mtcars1 <- as_tibble(mtcars1)
@@ -40,6 +41,8 @@ arrange(mtcars1, cyl, desc(mpg))
 # select(): 지정 변수만 추출 
 select(mtcars1, rowname, cyl:wt) 
 select(mtcars1, -rowname) 
+select(mtcars1, contains('c'))
+
 
 # 
 gm <- group_by(mtcars1, am)
@@ -84,6 +87,9 @@ install.packages('nycflights13')
 library(nycflights13)
 ls('package:nycflights13')
 flights %>% dim
+names(flights)
+flights[order(flights$dep_delay), c('carrier', 'dep_delay')] # arrange
+
 not_cancelled <- flights %>% filter(!is.na(dep_delay), !is.na(arr_delay))
 not_cancelled %>% dim
 not_cancelled %>% head(3) %>% .[,1:6]

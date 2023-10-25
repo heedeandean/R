@@ -77,3 +77,6 @@ tbl_df(insurance) # 한 페이지에 요약
 
 
 
+
+
+
