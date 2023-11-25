@@ -87,3 +87,29 @@ levene.test(df$Y, df$X, location = 'mean')
 # p값이 0.05 보다 작으므로, 두 그룹 간 평균에 유의한 차이가 있음
 t.test(male_h, female_h, var.equal = TRUE)  
 t.test(Y~X, df, var.equal=TRUE)
+
+############################
+setwd('/Users/hj/Downloads/rpy')
+
+## 1. 단일 표본 모평균 검정
+crab = scan('crab.txt')
+crab 
+
+t.test(crab, mu=24.3)
+
+## 2. 두 독립표본 평균 검정
+drug = read.csv('drug.csv', header=T)
+drug[c(1,7),]
+
+t.test(time~drug, data=drug)
+
+# 분산 동일성 검정
+var.test(time~drug, data=drug) # 분산이 동일하다.
+
+t.test(time~drug, var.equal=TRUE, data=drug)
+
+## 3. 대응표본(=짝지어진 표본) 평균 검정
+deer = read.csv('deer.csv', header=T)
+head(deer, 3)
+
+t.test(deer$hleg, deer$fleg, paired=TRUE)
