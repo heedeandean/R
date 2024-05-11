@@ -13,6 +13,7 @@ E(2*X+5)
 var(2*X+5) 
 sd(2*X+5) 
 
+####
 # 2. 연속형 확률분포
 # 2-1. 연속형 균등 분포
 X <- Unif(1,5)
@@ -42,3 +43,28 @@ p(X)(1) # X<1
 plot(X, inner=c('pdf of Gamma(2, 3)', 'cdf of Gamma(2, 3)', 'Quantile ftn of Gamma(2, 3)')) 
 E(X)
 var(X)
+
+####
+# 3. 다변량 확률분포
+# 3-1. 이변량 정규분포
+library(mvtnorm)
+x <- seq(0, 6, length=51) # 0~6까지 같은 간격의 51개 수열.
+x
+y <- seq(-1, 11, length=51) 
+f <- matrix(0, nrow=length(x), ncol=length(y)) # 0으로 된 행렬.
+f
+m <- c(3,5)
+S <- matrix(c(1,-1,-1,4), nrow = 2, ncol = 2)
+
+# 결합확률밀도함수
+for (i in 1:length(x)) {
+  for (j in 1:length(y)) {
+    f[i,j] = dmvnorm(c(x[i], y[j]), 
+                     mean=m, sigma=S) # 평균 벡터, 공분산 행렬
+  }
+}
+persp(x,y,f) # 3차원
+
+# 3-2. 다항 분포
+dmultinom(c(3,5,2), size = 10, prob = c(0.25,0.5,0.25))
+rmultinom(n=5, size = 10, prob = c(0.25,0.5,0.25)) # 난수 생성
