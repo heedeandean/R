@@ -122,3 +122,110 @@ RC_all_table
 RC_all_table
 RC_all_proptable <- sort(prop.table(table(RC_all)), decreasing = T) # 상대도수분포표
 RC_all_proptable
+
+###############
+# 2. 탐색적 자료 분석(Exploratory Data Analysis, EDA): 데이터 특징 파악
+library(tidytext)
+bingsent <- get_sentiments('bing')
+bingsent
+bingpos <- bingsent[bingsent$sentiment=='positive',]
+bingneg <- bingsent[bingsent$sentiment=='negative',]
+bingpos$word[1:30]
+
+RC_all_table
+RC_all_table[names(RC_all_table) %in% bingpos$word]
+
+# 2-1. 도수분포표: 단어 출현 빈도
+RC_all_table[1:32]  
+
+# 2-1-1. 막대그래프
+barplot(RC_all_table[1:32], las=2) 
+
+RC_all # 로빈슨 크루소 - 어휘들을 등장 순서대로 저장한 벡터
+RC_sent <- ifelse(RC_all %in% bingpos$word, 1, 
+                  ifelse(RC_all %in% bingneg$word, -1, 0))
+RC_sent
+
+# 감성 변화 양상
+barplot(tapply(RC_sent, (seq_along(RC_sent)-1) %/% 1000, sum)) # 1000개씩 묶음
+
+
+# 2-1-2. wordcloud
+#install.packages('wordcloud')
+library(wordcloud)
+wordcloud(words = names(RC_all_table), 
+          freq = RC_all_table, # 단어 출현 빈도 벡터
+          max.words = 100, # 출현 빈도 순으로 100개 단어 
+          random.order = F) # 중심부에 출연 빈도 높은 단어 배치
+
+# 글자 색
+wordcolor <- rep('grey', length(RC_all_table))
+wordcolor[names(RC_all_table) %in% bingpos$word] <- 'blue'
+wordcolor[names(RC_all_table) %in% bingneg$word] <- 'black'
+wordcolor
+wordcloud(words = names(RC_all_table), 
+          freq = RC_all_table, 
+          max.words = 100, 
+          random.order = F,
+          colors = wordcolor,
+          ordered.colors = T)
+
+
+#### 문서 비교
+# 막대 그래프
+RC_by_Chpt <- unlist(strsplit(paste(RC_body, collapse = ' '), 'CHAPTER'))[-1:-21] # list -> vector
+RC_by_Chpt
+
+### 전처리
+# 문장 부호 삭제
+RC_by_Chpt <- gsub(pattern="'s", replacement = '', x=RC_by_Chpt)
+RC_by_Chpt <- gsub(RC_by_Chpt, pattern="([^[:alnum:][:blank:]'-])", replacement = '', )
+
+RC_by_Chpt <- tolower(RC_by_Chpt) # 소문자로 변환
+RC_by_Chpt <- strsplit(RC_by_Chpt, " ") 
+RC_by_Chpt
+
+# 불용어 삭제
+RC_by_Chpt <- lapply(RC_by_Chpt,
+                     function(x) x[! x %in% c(stopwords(), '')])
+
+# 원형 복원
+RC_by_Chpt <- lapply(RC_by_Chpt, lemmatize_strings)
+typeof(RC_by_Chpt)
+
+###
+lev <- sort(unique(RC_all)) # 단어 중복 X
+RC_Chpt3 <- table(factor(RC_by_Chpt[[3]], levels=lev, ordered=T))
+RC_Chpt5 <- table(factor(RC_by_Chpt[[5]], levels=lev, ordered=T))
+RC_Chpt5
+typeof(RC_Chpt5)
+
+RC_Chpt5_3 <- RC_Chpt5 - RC_Chpt3
+RC_Chpt5_3 <- sort(RC_Chpt5_3)
+RC_Chpt5_3 <- RC_Chpt5_3[abs(RC_Chpt5_3)>5] 
+RC_Chpt5_3
+
+barplot(RC_Chpt5_3, las = 2) # 상대적 단어 출현 빈도
+
+# wordcloud
+RC_Chpt35 <- cbind(RC_Chpt3, RC_Chpt5) # 단어-문서 행렬(term-document matrix): 행(단어), 열(문서)
+RC_Chpt35
+commonality.cloud(RC_Chpt35, max.words=200, random.order=F) # 공통 단어
+comparison.cloud(RC_Chpt35, max.words=200, random.order=F) # 출현 빈도 차이
+
+# 2-1-3. 산점도
+RC_Chpt35 <- cbind(RC_Chpt35, RC_Chpt35[,1]-RC_Chpt35[,2]) # 3열: 출현 빈도 차이
+RC_Chpt35
+RC_Chpt35col <- ifelse(RC_Chpt35[,3] > 10, 'black',
+                       ifelse(RC_Chpt35[,3] < -10, 'blue', 'grey'))
+plot(RC_Chpt35[,1], RC_Chpt35[,2], type='n')
+text(RC_Chpt35[,1], RC_Chpt35[,2], row.names(RC_Chpt35), col = RC_Chpt35col)
+
+
+# 2-2. 단어 등장 위치
+friday <- ifelse(RC_all == 'friday', 1, 0)
+friday
+plot(friday, type='h', ylim=c(0,1)) # 히스토그램
+
+fear <- ifelse(RC_all == 'fear', 1, 0)
+plot(fear, type='h', ylim=c(0,1)) 
